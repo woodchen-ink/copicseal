@@ -1,0 +1,80 @@
+<template>
+  <ElCollapse class="co-settings-panel">
+    <ElCollapseItem name="1">
+      <template #title>
+        <div class="icon">
+          <IconArrowDown />
+        </div>
+        <div class="title">
+          {{ title }}
+        </div>
+      </template>
+      <slot />
+    </ElCollapseItem>
+  </ElCollapse>
+</template>
+
+<script lang="ts" setup>
+import { ElCollapse, ElCollapseItem } from 'element-plus';
+import 'element-plus/theme-chalk/base.css';
+import 'element-plus/theme-chalk/el-collapse.css';
+import 'element-plus/theme-chalk/el-collapse-item.css';
+import IconArrowDown from './components/icon-arrow-down.vue';
+
+defineProps<{
+  title: string;
+}>();
+</script>
+
+<style lang="scss" scoped>
+.co-settings-panel {
+  margin: 4px;
+  border-top: 0;
+  border-bottom: 0;
+
+  :deep(.el-collapse-item) {
+    --el-collapse-header-height: 36px;
+    --el-collapse-header-bg-color: #535353;
+    --el-collapse-content-bg-color: #535353;
+    --el-collapse-header-text-color: #eee;
+    --el-collapse-content-text-color: #eee;
+
+    .el-collapse-item__header {
+      padding: 0 12px;
+      border-bottom: 0;
+      color: unset;
+
+      .icon {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        transform: rotate(-90deg);
+        transition: all 0.3s;
+      }
+
+      &.is-active {
+        .icon {
+          transform: rotate(0deg);
+        }
+      }
+
+      .title {
+        margin-left: 4px;
+        font-size: 14px;
+      }
+
+      .el-collapse-item__arrow {
+        display: none;
+      }
+    }
+
+    .el-collapse-item__wrap {
+      border-bottom: 0;
+    }
+
+    .el-collapse-item__content {
+      padding: 0 12px 12px;
+    }
+  }
+}
+</style>

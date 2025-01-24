@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import 'element-plus/theme-chalk/el-scrollbar.css';
+import { provideCoPic } from './uses';
+import CoMark from './views/co-mark.vue';
+
+provideCoPic();
+</script>
+
+<template>
+  <CoMark />
+</template>
+
+<style lang="scss" scoped></style>
+
+<style lang="scss">
+body {
+  margin: 0;
+  padding: 0;
+  color: #eee;
+  font-size: initial;
+
+  .el-scrollbar {
+    --el-scrollbar-bg-color: white;
+    --el-scrollbar-hover-bg-color: white;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+</style>
