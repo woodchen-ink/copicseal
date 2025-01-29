@@ -1,11 +1,15 @@
 import { contextBridge, ipcRenderer } from 'electron/renderer';
 import { electronAPI } from '@electron-toolkit/preload';
+import type { CaptureOptions } from '../main/utils/capture';
 
 // Custom APIs for renderer
 const api = {
   onWinResized: (callback: () => void) => {
     ipcRenderer.on('resized', callback);
     return () => void ipcRenderer.off('resized', callback);
+  },
+  captureDOM: (options: CaptureOptions) => {
+    return ipcRenderer.invoke('captureDOM', options);
   }
 };
 

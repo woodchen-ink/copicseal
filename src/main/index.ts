@@ -1,9 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron';
-import path, { join } from 'path';
+import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-import puppeteer from 'puppeteer-core';
 import pie from 'puppeteer-in-electron';
+import { handleCapture } from './utils/capture';
 
 function createWindow() {
   // Create the browser window.
@@ -49,6 +49,12 @@ pie.initialize(app);
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  // session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
+  //   desktopCapturer.getSources({ types: ['window'] }).then((sources) => {
+  //     // Grant access to the first screen found.
+  //     callback({ video: sources[0], audio: 'loopback' });
+  //   });
+  // });
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
 
@@ -62,7 +68,7 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'));
 
-  const mainWindow = createWindow();
+  createWindow();
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -70,39 +76,8 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-  ipcMain.on('capture-div', async (_event, divSelector, viewport) => {
-    console.log(divSelector, viewport);
-
-    console.time('capture-div');
-    const outputPath = path.resolve('div_screenshot.jpg'); // 保存截图路径
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const browser = await pie.connect(app, puppeteer);
-    const page = await pie.getPage(browser, mainWindow);
-    const vp = page.viewport();
-    page.setViewport({ ...viewport, deviceScaleFactor: 2 });
-    // 截取特定元素
-    const element = await page.$(divSelector);
-    if (element) {
-      await page.screenshot({ path: outputPath, type: 'jpeg' });
-      // browser.close()
-    }
-    page.setViewport(vp);
-    console.log('截图完成', outputPath);
-    console.timeEnd('capture-div');
-
-    // // mainWindow.webContents.executeJavaScript(`alert('${outputPath}')`)
-    _event.returnValue = outputPath;
-    return outputPath;
-    // try {
-    //   mainWindow.setOpacity(0)
-    //   await captureDivScreenshot(mainWindow, divSelector, outputPath)
-    //   mainWindow.setOpacity(1)
-    //   return { success: true, path: outputPath }
-    // } catch (error) {
-    //   mainWindow.setOpacity(1)
-    //   return { success: false, error: (error as Error).message }
-    // }
+  ipcMain.handle('captureDOM', async (_event, options) => {
+    return handleCapture(options);
   });
 });
 

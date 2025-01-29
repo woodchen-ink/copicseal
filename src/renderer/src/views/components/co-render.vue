@@ -8,12 +8,16 @@ import {
   type CSSProperties,
   PropType
 } from 'vue';
-import { Settings, SettingsField } from '../../types';
+import { Settings } from '../../types';
 import { mapStyle } from '@renderer/utils/common';
 import { Tags } from 'exifreader';
 import TplDefault from '../tpls/tpl-default.vue';
+import { renderUtils } from '@renderer/utils/render';
 
 console.log(TplDefault);
+
+const res = () => import('../tpls/tpl-default.vue');
+console.log(res);
 
 export default defineComponent({
   props: {
@@ -72,7 +76,9 @@ export default defineComponent({
     // const [ow, oh] = [1280, 720]
 
     onMounted(async () => {
-      handleCalcSize();
+      setTimeout(() => {
+        handleCalcSize();
+      }, 200);
     });
 
     const offWinResize = window.api.onWinResized(() => {
@@ -84,44 +90,67 @@ export default defineComponent({
       offWinResize();
     });
 
-    function formatExpression(expression: string | undefined, data: Tags) {
-      if (!expression) return '';
-      return expression.replace(/\${(\w+)}/g, (_, key) => data[key]?.description || '');
-    }
+    // function formatExpression(expression: string | undefined, data: Tags) {
+    //   if (!expression) return '';
+    //   return expression.replace(/\${(\w+)}/g, (_, key) => data[key]?.description || '');
+    // }
+
+    const accessedKeys = new Set<string>();
+    const handler = {
+      get(target: Record<string, string>, key: string) {
+        accessedKeys.add(key);
+        console.log('2Accessed keys:', Array.from(accessedKeys));
+
+        return target[key];
+      }
+    };
+    const info = new Proxy(
+      Object.keys(props.exif).reduce(
+        (acc, key) => {
+          acc[key] = props.exif[key].description || '';
+          return acc;
+        },
+        {} as Record<string, string>
+      ),
+      handler
+    );
 
     function render() {
-      const { fields } = props.settings;
+      // const { fields } = props.settings;
 
-      return fields.map((field) => renderNode(field, true));
+      // return fields.map((field) => renderNode(field, true));
+
+      return <TplDefault utils={renderUtils} info={info} imgUrl={props.imgUrl} />;
     }
 
-    function renderNode(field: SettingsField, isRoot = false) {
-      if (field.type === 'container') {
-        return (
-          <div class={{ root: isRoot }} style={field.style}>
-            {field.children?.map((f) => renderNode(f))}
-          </div>
-        );
-      }
-      if (field.type === 'main-image') {
-        // return (
-        //   <div
-        //     class="main-image"
-        //     style={{ ...field.style, backgroundImage: `url(${props.imgUrl})`, backgroundSize: 'cover' }}
-        //   ></div>
-        // )
-        return (
-          <img class="main-image" style={{ ...field.style, display: 'block' }} src={props.imgUrl} />
-        );
-      }
-      if (field.type === 'text') {
-        return <div style={field.style}>{formatExpression(field.expression, props.exif)}</div>;
-      }
-      return field.type;
-    }
+    // function renderNode(field: SettingsField, isRoot = false) {
+    //   if (field.type === 'container') {
+    //     return (
+    //       <div class={{ root: isRoot }} style={field.style}>
+    //         {field.children?.map((f) => renderNode(f))}
+    //       </div>
+    //     );
+    //   }
+    //   if (field.type === 'main-image') {
+    //     // return (
+    //     //   <div
+    //     //     class="main-image"
+    //     //     style={{ ...field.style, backgroundImage: `url(${props.imgUrl})`, backgroundSize: 'cover' }}
+    //     //   ></div>
+    //     // )
+    //     return (
+    //       <img class="main-image" style={{ ...field.style, display: 'block' }} src={props.imgUrl} />
+    //     );
+    //   }
+    //   if (field.type === 'text') {
+    //     return <div style={field.style}>{formatExpression(field.expression, props.exif)}</div>;
+    //   }
+    //   return field.type;
+    // }
 
     function handleCalcSize() {
       const wrapperEl = el.value?.parentElement?.parentElement;
+      console.log(el.value, bgEl.value, wrapperEl);
       if (el.value && bgEl.value && wrapperEl) {
         const { width, height } = wrapperEl.getBoundingClientRect();
         calcSize(el.value, bgEl.value, [width, height]);
@@ -151,6 +180,8 @@ export default defineComponent({
       //     mainImage.style.width = `${iw / ih}em`
       //     mainImage.style.height = '1em'
       //   } else {
+      console.log(mainImage);
+
       mainImage.style.width = '1rem';
       mainImage.style.height = `${ih / iw}rem`;
       //   }

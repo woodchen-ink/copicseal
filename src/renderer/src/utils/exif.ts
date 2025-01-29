@@ -1,6 +1,6 @@
 // import Exif from 'exif-js'
 import ExifReader from 'exifreader';
-// import piexif from 'piexifjs'
+// import piexif from 'piexifjs';
 export { ImageIFD, TAGS, type ExifDict } from 'piexifjs';
 // export type ExifDict = piexif.ExifDict
 
@@ -11,13 +11,15 @@ export async function getExif(file: File) {
   // console.log(piexif.load(Buffer.from(await file.arrayBuffer()).toString('binary')))
 
   // const reader = new FileReader()
-  // return new Promise<piexif.ExifDict>((resolve) => {
+  // // return new Promise<piexif.ExifDict>((resolve) => {
   //   reader.onload = (e) => {
   //     const data = e.target!.result as string
-  //     console.log(data)
+  //     // console.log(data)
 
   //     const exifData = piexif.load(data)
-  //     resolve(exifData)
+  //     // resolve(exifData)
+  //     console.log(exifData);
+
   //   }
   //   reader.readAsDataURL(file)
   // })
