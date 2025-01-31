@@ -151,3 +151,23 @@ function getDefaultSettings(): Settings {
     ]
   };
 }
+
+export const primaryExif = [
+  { name: '相机厂商', key: 'Make' },
+  { name: '相机型号', key: 'Model' },
+  { name: '软件', key: 'Software' },
+  { name: '拍摄日期', key: 'DateTime' },
+  { name: '镜头型号', key: 'LensModel' },
+  { name: '焦距', key: 'FocalLength' },
+  { name: '光圈', key: 'FNumber' },
+  { name: '快门', key: 'ExposureTime' },
+  { name: '曝光补偿', key: 'ExposureBiasValue' },
+  { name: '曝光模式', key: 'ExposureMode' },
+  { name: '白平衡', key: 'WhiteBalance' },
+  { name: '测光模式', key: 'MeteringMode' },
+  { name: '感光度', key: 'ISOSpeedRatings' }
+];
+
+export const getExifName = (key: string) => {
+  return primaryExif.find((item) => item.key === key)?.name || key;
+};

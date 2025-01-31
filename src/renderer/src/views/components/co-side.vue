@@ -1,19 +1,44 @@
 <template>
   <ElScrollbar class="co-side">
     <CoSettingsPanel title="输出" />
-    <CoSettingsPanel title="基本" />
+    <!-- <CoSettingsPanel title="基本" /> -->
+    <CoPropsPanel />
     <CoBgPanel />
-    <CoSettingsPanel title="边框" />
-    <CoSettingsPanel title="debug">
-      {{ currentCoPic?.getSettings() }}
+    <!-- <CoSettingsPanel title="边框" /> -->
+    <CoSettingsPanel title="Debug">
+      <div v-if="currentCoPic?.isLoaded">
+        <table style="width: 100%">
+          <tr v-for="item in primaryExif" :key="item.key">
+            <td>
+              <div style="white-space: nowrap; text-align: right; opacity: 0.6; font-size: 0.8em">
+                {{ item.name }}:
+              </div>
+            </td>
+            <td>
+              <div
+                style="
+                  white-space: nowrap;
+                  word-break: keep-all;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
+                {{ currentCoPic.getExif()[item.key] }}
+              </div>
+            </td>
+          </tr>
+        </table>
+        <!-- {{ currentCoPic.getSettings() }} -->
+      </div>
     </CoSettingsPanel>
   </ElScrollbar>
 </template>
 
 <script lang="ts" setup>
 import { ElScrollbar } from 'element-plus';
+import CoPropsPanel from './panels/co-props-panel.vue';
 import CoBgPanel from './panels/co-bg-panel.vue';
-import { injectCoPic } from '@/uses';
+import { injectCoPic, primaryExif } from '@/uses';
 import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
 
 const { currentCoPic } = injectCoPic();

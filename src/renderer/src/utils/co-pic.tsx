@@ -1,6 +1,5 @@
-import type { Tags } from 'exifreader';
-import { type VNode, ref } from 'vue';
-import { getExif } from './exif';
+import { type VNode, computed, ref } from 'vue';
+import { getExif, Tags } from './exif';
 import type { Settings, SettingsField } from '@/types';
 import CoRenderVue from '@renderer/views/components/co-render.vue';
 
@@ -15,7 +14,9 @@ export class CoPic {
 
   private initPromise: Promise<void[]> | null = null;
 
-  private exif?: Tags;
+  private exif = ref<Tags>();
+  modifiedExif = ref<Tags>({});
+  outputExif = computed(() => ({ ...this.exif.value, ...this.modifiedExif.value }));
   isLoaded = ref(false);
 
   constructor(file: File) {
@@ -50,7 +51,24 @@ export class CoPic {
   }
 
   getExif() {
-    return this.exif;
+    return this.outputExif.value || {};
+  }
+
+  usedExifKeys = ref<string[]>([]);
+
+  addExifKey(key: string) {
+    console.log('addExifKey');
+
+    if (!this.usedExifKeys.value.includes(key)) {
+      this.usedExifKeys.value.push(key);
+      this.modifiedExif.value[key] = this.exif.value?.[key] || '';
+    }
+  }
+
+  resetModifiedExif() {
+    this.usedExifKeys.value.forEach((key) => {
+      this.modifiedExif.value[key] = this.exif.value?.[key] || '';
+    });
   }
 
   update() {
@@ -75,17 +93,19 @@ export class CoPic {
     this.asyncLoad();
     return () => {
       if (this.isLoaded.value)
-        return <CoRenderVue imgUrl={this.imgUrl} settings={this.settings} exif={this.exif} />;
+        return (
+          <CoRenderVue imgUrl={this.imgUrl} settings={this.settings} exif={this.outputExif.value} />
+        );
       return <Loading imgUrl={this.imgUrl} />;
     };
   }
 
   private async loadExif() {
-    if (!this.exif) {
-      this.exif = await getExif(this.file);
+    if (!this.exif.value) {
+      this.exif.value = await getExif(this.file);
       // this.imgInfo = toImgInfo(this.exif)
     }
-    console.log(this.exif);
+    console.log(this.exif.value);
 
     // return this.exif
   }

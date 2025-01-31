@@ -2,8 +2,8 @@
   <div class="co-menu">
     <div v-if="list.length">{{ currentCoPic.name }}({{ currentIndex + 1 }}/{{ list.length }})</div>
     <div v-if="list.length">
-      <CoButton @click="handleExport">导出</CoButton>
-      <CoButton @click="handleExportAll">导出全部</CoButton>
+      <CoButton outline @click="handleExport">导出</CoButton>
+      <CoButton outline @click="handleExportAll">导出全部</CoButton>
     </div>
   </div>
 </template>
@@ -29,36 +29,37 @@ async function handleExport() {
     output: [
       {
         path: '/Users/kohai/projects/git/comark-desktop/out/screenshot1.jpg',
-        width: ~~width,
-        height: ~~height
-      },
-      {
-        path: '/Users/kohai/projects/git/comark-desktop/out/screenshot11.jpg',
-        type: 'jpeg',
-        quality: 50,
-        width: ~~width,
-        height: ~~height
-      },
-      {
-        path: '/Users/kohai/projects/git/comark-desktop/out/screenshot2.jpg',
-        type: 'jpeg',
-        quality: 10,
-        width: ~~width,
-        height: ~~height
-      },
-      {
-        path: '/Users/kohai/projects/git/comark-desktop/out/screenshot3.jpg',
-        type: 'jpeg',
-        quality: 100,
-        width: ~~width,
-        height: ~~height
-      },
-      {
-        path: '/Users/kohai/projects/git/comark-desktop/out/screenshot.png',
-        type: 'png',
+        scale: 4,
         width: ~~width,
         height: ~~height
       }
+      // {
+      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot11.jpg',
+      //   type: 'jpeg',
+      //   quality: 50,
+      //   width: ~~width,
+      //   height: ~~height
+      // },
+      // {
+      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot2.jpg',
+      //   type: 'jpeg',
+      //   quality: 10,
+      //   width: ~~width,
+      //   height: ~~height
+      // },
+      // {
+      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot3.jpg',
+      //   type: 'jpeg',
+      //   quality: 100,
+      //   width: ~~width,
+      //   height: ~~height
+      // },
+      // {
+      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot.png',
+      //   type: 'png',
+      //   width: ~~width,
+      //   height: ~~height
+      // }
     ]
   });
   console.timeEnd('capture');

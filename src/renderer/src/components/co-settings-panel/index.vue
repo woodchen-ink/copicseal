@@ -8,6 +8,10 @@
         <div class="title">
           {{ title }}
         </div>
+        <div style="flex: 1"></div>
+        <CoButton v-if="onUndo" icon title="还原" @click.prevent.stop="onUndo"
+          ><Undo style="font-size: 20px"
+        /></CoButton>
       </template>
       <slot />
     </ElCollapseItem>
@@ -20,9 +24,12 @@ import 'element-plus/theme-chalk/base.css';
 import 'element-plus/theme-chalk/el-collapse.css';
 import 'element-plus/theme-chalk/el-collapse-item.css';
 import IconArrowDown from './components/icon-arrow-down.vue';
+import { Undo } from '../co-icon';
+import CoButton from '../co-button/index.vue';
 
 defineProps<{
   title: string;
+  onUndo?: () => void;
 }>();
 </script>
 
@@ -40,6 +47,8 @@ defineProps<{
     --el-collapse-content-text-color: #eee;
 
     .el-collapse-item__header {
+      display: flex;
+      justify-content: space-between;
       padding: 0 12px;
       border-bottom: 0;
       color: unset;

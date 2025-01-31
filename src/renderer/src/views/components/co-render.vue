@@ -10,14 +10,10 @@ import {
 } from 'vue';
 import { Settings } from '../../types';
 import { mapStyle } from '@renderer/utils/common';
-import { Tags } from 'exifreader';
+import { Tags } from '@/utils/exif';
 import TplDefault from '../tpls/tpl-default.vue';
 import { renderUtils } from '@renderer/utils/render';
-
-console.log(TplDefault);
-
-const res = () => import('../tpls/tpl-default.vue');
-console.log(res);
+import { injectCoPic } from '@renderer/uses';
 
 export default defineComponent({
   props: {
@@ -95,30 +91,26 @@ export default defineComponent({
     //   return expression.replace(/\${(\w+)}/g, (_, key) => data[key]?.description || '');
     // }
 
-    const accessedKeys = new Set<string>();
-    const handler = {
-      get(target: Record<string, string>, key: string) {
-        accessedKeys.add(key);
-        console.log('2Accessed keys:', Array.from(accessedKeys));
-
-        return target[key];
-      }
-    };
-    const info = new Proxy(
-      Object.keys(props.exif).reduce(
-        (acc, key) => {
-          acc[key] = props.exif[key].description || '';
-          return acc;
-        },
-        {} as Record<string, string>
-      ),
-      handler
-    );
+    const { currentCoPic } = injectCoPic();
 
     function render() {
       // const { fields } = props.settings;
 
       // return fields.map((field) => renderNode(field, true));
+      const handler = {
+        get(target: Record<string, string>, key: string) {
+          currentCoPic.value.addExifKey(key);
+
+          return target[key];
+        }
+      };
+      const info = new Proxy(
+        Object.keys(props.exif).reduce((acc, key) => {
+          acc[key] = props.exif[key] || '';
+          return acc;
+        }, {} as Tags),
+        handler
+      );
 
       return <TplDefault utils={renderUtils} info={info} imgUrl={props.imgUrl} />;
     }
@@ -212,9 +204,8 @@ export default defineComponent({
     }
 
     function getImgSize() {
-      const { 'Image Width': ImageWidth, 'Image Height': ImageHeight, Orientation } = props.exif;
-      const [iw, ih, or] = [ImageWidth?.value, ImageHeight?.value, Orientation?.value];
-      if (iw && ih) return or && +or > 4 ? [ih, iw] : [iw, ih];
+      const { ImageWidth, ImageHeight } = props.exif;
+      if (ImageWidth && ImageHeight) return [+ImageWidth, +ImageHeight];
 
       const img = new Image();
       img.src = props.imgUrl;
