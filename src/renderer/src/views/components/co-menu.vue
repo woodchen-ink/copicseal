@@ -2,19 +2,22 @@
   <div class="co-menu">
     <div v-if="list.length">{{ currentCoPic.name }}({{ currentIndex + 1 }}/{{ list.length }})</div>
     <div v-if="list.length">
-      <CoButton outline @click="handleExport">导出</CoButton>
-      <CoButton outline @click="handleExportAll">导出全部</CoButton>
+      <CoButton outline @click="handleExport()">导出</CoButton>
+      <CoButton outline @click="handleExportAll()">导出全部</CoButton>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { injectCoPic } from '@/uses';
+import { injectCoPic, injectProgress } from '@/uses';
 import CoButton from '@/components/co-button/index.vue';
 import { nextTick } from 'vue';
 
 const { currentCoPic, currentIndex, list } = injectCoPic();
-async function handleExport() {
+
+const progress = injectProgress();
+
+async function exportToImage() {
   const { width, height } = document.querySelector('.co-render')!.getBoundingClientRect()!;
   const fontSize = document.querySelector('html')!.style.fontSize;
   await new Promise((r) => setTimeout(r, 20));
@@ -29,7 +32,7 @@ async function handleExport() {
     output: [
       {
         path: '/Users/kohai/projects/git/comark-desktop/out/screenshot1.jpg',
-        scale: 4,
+        scale: 2,
         width: ~~width,
         height: ~~height
       }
@@ -64,32 +67,31 @@ async function handleExport() {
   });
   console.timeEnd('capture');
   console.log(res);
-
-  // window.electron.ipcRenderer.send('capture-div', '.co-render', {
-  //   width: ~~width,
-  //   height: ~~height
-  // });
-  // await new Promise((r) => setTimeout(r, 2000));
-  // Object.assign(document.querySelector<HTMLDivElement>('.co-render')!.style, {
-  //   position: 'static',
-  //   zIndex: '',
-  //   top: 0,
-  //   left: 0,
-  //   backgroundColor: '',
-  //   overflow: ''
-  // });
-  // if (currentCoPic.value)
-  //   currentCoPic.value.exportToImage()
+}
+async function handleExport() {
+  progress.value.visible = true;
+  progress.value.current = 0;
+  progress.value.total = 1;
+  progress.value.filename = currentCoPic.value.name;
+  console.log(progress.value);
+  await exportToImage();
+  progress.value.current = 1;
 }
 
 async function handleExportAll() {
   console.time('exportAll');
+  progress.value.visible = true;
   await list.value.reduce(async (p, _pic, index) => {
     await p;
+    if (!progress.value.visible) return;
     currentIndex.value = index;
-    await new Promise((r) => setTimeout(r, 500));
+    progress.value.current = index;
+    progress.value.total = list.value.length;
+    progress.value.filename = currentCoPic.value.name;
+    await new Promise((r) => setTimeout(r, 300));
     await nextTick();
-    await handleExport();
+    await exportToImage();
+    progress.value.current += 1;
   }, Promise.resolve());
   console.timeEnd('exportAll');
 }

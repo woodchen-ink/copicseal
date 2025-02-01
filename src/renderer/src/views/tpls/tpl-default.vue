@@ -29,16 +29,25 @@
       <div
         :style="{
           display: 'flex',
-          alignItems: 'baseline'
+          alignItems: 'center'
         }"
       >
         <div
           :style="{
             display: 'flex',
-            alignItems: 'flex-end'
+            alignItems: 'center'
           }"
         >
-          {{ info.Make }}
+          <img
+            v-if="utils.getModelLogo(info.Make)"
+            :style="{
+              maxHeight: '0.08rem',
+              maxWidth: '0.2rem'
+            }"
+            :src="utils.getModelLogo(info.Make)"
+            alt=""
+          />
+          <span v-else :style="{ fontWeight: 'bold' }">{{ info.Make }}</span>
         </div>
         <div
           :style="{

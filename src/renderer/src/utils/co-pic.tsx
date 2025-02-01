@@ -1,6 +1,6 @@
 import { type VNode, computed, ref } from 'vue';
 import { getExif, Tags } from './exif';
-import type { Settings, SettingsField } from '@/types';
+import type { Settings } from '@/types';
 import CoRenderVue from '@renderer/views/components/co-render.vue';
 
 export class CoPic {
@@ -27,20 +27,20 @@ export class CoPic {
   }
 
   setSettings(settings: Partial<Settings>) {
-    const fillId = (fields: SettingsField[]): SettingsField[] => {
-      return fields.map((field) => {
-        return {
-          ...field,
-          children: field.children ? fillId(field.children) : undefined
-        };
-      });
-    };
+    // const fillId = (fields: SettingsField[]): SettingsField[] => {
+    //   return fields.map((field) => {
+    //     return {
+    //       ...field,
+    //       children: field.children ? fillId(field.children) : undefined
+    //     };
+    //   });
+    // };
 
     this.settings = {
       ...this.settings,
       ...settings
     };
-    this.settings.fields = fillId(this.settings.fields ?? []);
+    // this.settings.fields = fillId(this.settings.fields ?? []);
     this.isLoaded.value = false;
     this.vNode = null;
     this.asyncLoad();
@@ -57,8 +57,6 @@ export class CoPic {
   usedExifKeys = ref<string[]>([]);
 
   addExifKey(key: string) {
-    console.log('addExifKey');
-
     if (!this.usedExifKeys.value.includes(key)) {
       this.usedExifKeys.value.push(key);
       this.modifiedExif.value[key] = this.exif.value?.[key] || '';

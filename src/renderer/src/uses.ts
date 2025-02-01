@@ -17,6 +17,39 @@ export function injectCoPic() {
   return inject(CoPicInjectionKey, getCoPicList());
 }
 
+const ProgressInjectionKey = Symbol('ProgressInjectionKey');
+export function provideProgress() {
+  const progress = ref({
+    current: 0,
+    total: 0,
+    filename: '',
+    visible: false,
+    onCancel: () => {
+      progress.value.visible = false;
+    },
+    onFinish: () => {
+      progress.value.visible = false;
+    }
+  });
+  provide(ProgressInjectionKey, progress);
+
+  return progress;
+}
+
+export function injectProgress() {
+  return inject(
+    ProgressInjectionKey,
+    ref({
+      current: 0,
+      total: 0,
+      filename: '',
+      visible: false,
+      onCancel: () => {},
+      onFinish: () => {}
+    })
+  );
+}
+
 function getCoPicList() {
   const settings: Ref<Settings> = ref<Settings>(getDefaultSettings());
   const list = shallowRef<CoPic[]>([]);

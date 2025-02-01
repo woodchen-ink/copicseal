@@ -72,6 +72,7 @@ watch(
       isPicChange = false;
       return;
     }
+    // Object.assign(currentCoPic.value.getSettings().background, settings.value);
     currentCoPic.value.setSettings({
       background: settings.value
     });

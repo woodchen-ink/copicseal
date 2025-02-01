@@ -196,6 +196,10 @@ export default defineComponent({
       sizeRatio.value = isHorizontal.value ? oh / fontSize : ow / fontSize;
       console.log('sizeRatio', sizeRatio.value, isHorizontal.value);
 
+      if (props.settings.background.mode === 'none') {
+        ow = oh * imgRatio;
+      }
+
       containerEl.style.width = `${ow}px`;
       containerEl.style.height = `${oh}px`;
       containerEl.style.minWidth = `${ow}px`;
