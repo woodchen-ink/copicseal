@@ -4,6 +4,7 @@
       <div class="header">导出图片</div>
       <div class="content">
         <el-progress
+          striped
           :percentage="(current / total) * 100 || 0"
           :stroke-width="10"
           :show-text="false"

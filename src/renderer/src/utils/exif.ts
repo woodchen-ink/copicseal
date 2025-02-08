@@ -48,6 +48,8 @@ function formatExif(exif: RawTags): Tags {
     } else if (val.description) {
       tags[key] = val.description;
     }
+  }
+  for (const key in exif) {
     if (exifKeyFormatter[key]) {
       Object.assign(tags, exifKeyFormatter[key](exif));
     }
@@ -70,6 +72,11 @@ const exifKeyFormatter: Record<keyof RawTags, (exif: RawTags) => Tags> = {
       return { ImageWidth: val };
     }
     return { ImageHeight: val };
+  },
+  FocalLength: (exif) => {
+    return {
+      FocalLength: exif.FocalLength?.description.replace(' ', '')
+    };
   }
 };
 

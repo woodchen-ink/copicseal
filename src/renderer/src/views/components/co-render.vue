@@ -112,7 +112,14 @@ export default defineComponent({
         handler
       );
 
-      return <TplDefault utils={renderUtils} info={info} imgUrl={props.imgUrl} />;
+      return (
+        <TplDefault
+          data-co-tpl={TplDefault.__scopeId}
+          utils={renderUtils}
+          info={info}
+          imgUrl={props.imgUrl}
+        />
+      );
     }
 
     // function renderNode(field: SettingsField, isRoot = false) {
@@ -163,7 +170,8 @@ export default defineComponent({
       const initialWidth = 400;
       document.querySelector('html')!.style.fontSize = `${initialWidth}px`;
 
-      const mainImage = containerEl.querySelector<HTMLDivElement>('.main-image')!;
+      const mainImage = containerEl.querySelector<HTMLDivElement>('.main-image');
+      if (!mainImage) return;
 
       const [iw, ih] = await getImgSize();
       console.log(iw, ih);
