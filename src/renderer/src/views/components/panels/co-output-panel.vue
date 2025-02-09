@@ -1,0 +1,142 @@
+<template>
+  <CoSettingsPanel v-if="currentCoPic" title="输出">
+    <div class="camera-info">
+      <div>宽 * 高：</div>
+      <div>倍数：</div>
+      <div>类型：</div>
+      <div class="btn">
+        <CoButton icon @click="handleAdd">+</CoButton>
+      </div>
+      <template v-for="(item, index) in outputs" :key="index">
+        <div class="width-height">
+          <input v-model="item.width" type="text" />
+          <div>*</div>
+          <input v-model="item.height" type="text" />
+        </div>
+        <div>
+          <select v-model="item.scale">
+            <option v-for="option in scaleOptions" :key="option" :value="option">
+              {{ option }}x
+            </option>
+          </select>
+        </div>
+        <div>
+          <select v-model="item.type">
+            <option v-for="option in typeOptions" :key="option" :value="option">
+              {{ option }}
+            </option>
+          </select>
+        </div>
+        <div class="btn">
+          <CoButton v-show="outputs.length > 1" icon @click="handleDel(index)"><Delete /></CoButton>
+        </div>
+      </template>
+    </div>
+    <div class="output-path">
+      <div>导出目录：（<span class="change-btn" @click="handleOutputFolder">更换</span>）</div>
+      <span>{{ outputPath }}</span>
+    </div>
+    <div class="btns">
+      <CoButton outline>应用全部</CoButton>
+    </div>
+  </CoSettingsPanel>
+</template>
+<script lang="ts" setup>
+import { ref, watch } from 'vue';
+import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
+import { injectCoPic } from '@renderer/uses';
+import CoButton from '@/components/co-button/index.vue';
+import { Delete } from '@/components/co-icon/index';
+import { Output } from '@/types';
+
+const { currentCoPic } = injectCoPic();
+
+const scaleOptions = ref([1, 2, 4, 6, 8]);
+const typeOptions = ref(['jpeg', 'png', 'webp']);
+
+const outputs = ref<Output[]>([]);
+const outputPath = ref('');
+
+watch(currentCoPic, (value) => {
+  if (value) {
+    outputs.value = value.getSettings().outputs;
+    outputPath.value = value.getSettings().outputPath || '';
+  }
+});
+
+const handleAdd = () => {
+  outputs.value.push({
+    scale: 1,
+    width: 1920,
+    height: 1080,
+    type: 'jpeg'
+  });
+};
+
+const handleDel = (index: number) => {
+  outputs.value.splice(index, 1);
+};
+
+const handleOutputFolder = async () => {
+  const path = await window.api.openDirectoryDialog();
+  if (!path) return;
+  outputPath.value = path;
+  currentCoPic.value.getSettings().outputPath = path;
+};
+</script>
+
+<style lang="scss" scoped>
+.camera-info {
+  display: grid;
+  grid-template-columns: 2fr 40px 56px 16px;
+  /* 行/列间距 */
+  gap: 4px 8px;
+
+  input,
+  select {
+    width: 100%;
+  }
+
+  .width-height {
+    display: flex;
+    input {
+      flex: 1;
+    }
+    > div {
+      margin: 0 4px;
+    }
+  }
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button {
+      font-size: 20px;
+      opacity: 0.5;
+    }
+  }
+}
+
+.output-path {
+  margin-top: 16px;
+
+  .change-btn {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  span {
+    &:nth-child(2) {
+      text-decoration: underline;
+      cursor: pointer;
+      color: #98c4f6;
+    }
+  }
+}
+
+.btns {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+</style>

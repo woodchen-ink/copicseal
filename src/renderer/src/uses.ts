@@ -95,7 +95,7 @@ function getDefaultSettings(): Settings {
           },
           {
             type: 'brightness',
-            value: '120%'
+            value: '100%'
           }
         ]
       },
@@ -106,82 +106,15 @@ function getDefaultSettings(): Settings {
       },
       padding: [0.1, 0.1]
     },
-    fields: [
+    outputs: [
       {
-        type: 'container',
-        style: {
-          padding: '0.01rem 0.01rem 0',
-          backgroundColor: '#fffc',
-          backdropFilter: 'blur(0.2rem)',
-          boxShadow: `0 0 0.2rem rgba(0, 0, 0, .8)`
-        },
-        children: [
-          {
-            type: 'main-image',
-            style: {
-              margin: '0 auto'
-              // width: '1rem'
-            }
-          },
-          {
-            type: 'container',
-            style: {
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              height: '0.1rem',
-              paddingLeft: '0.02rem',
-              paddingRight: '0.02rem',
-              fontSize: '0.05rem'
-            },
-            children: [
-              {
-                type: 'container',
-                style: {
-                  display: 'flex',
-                  alignItems: 'baseline'
-                },
-                children: [
-                  {
-                    type: 'text',
-                    expression: '${Make}',
-                    style: {
-                      display: 'flex',
-                      alignItems: 'flex-end'
-                    }
-                  },
-                  {
-                    type: 'text',
-                    expression: '${Model}',
-                    style: {
-                      display: 'flex',
-                      alignItems: 'flex-end',
-                      marginLeft: '0.02rem',
-                      fontSize: '0.04rem'
-                    }
-                  }
-                ]
-              },
-              {
-                type: 'container',
-                children: [
-                  {
-                    type: 'text',
-                    expression: '${FocalLength} ${FNumber} ${ExposureTime}s ISO${ISOSpeedRatings}',
-                    style: {
-                      display: 'flex',
-                      alignItems: 'flex-end',
-                      marginLeft: '0.03rem',
-                      fontSize: '0.03rem'
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+        scale: 1,
+        width: 1920,
+        height: 1080,
+        type: 'jpeg'
       }
-    ]
+    ],
+    outputPath: ''
   };
 }
 

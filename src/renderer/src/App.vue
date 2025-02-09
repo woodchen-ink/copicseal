@@ -27,4 +27,22 @@ body {
 * {
   box-sizing: border-box;
 }
+
+input,
+select {
+  line-height: 20px;
+  color: #eee;
+  background-color: #3e3e3e;
+  border: 1px solid #666;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #999;
+  }
+}
+
+select {
+  height: 24px;
+}
 </style>

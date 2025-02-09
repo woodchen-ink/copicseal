@@ -10,7 +10,8 @@ const api = {
   },
   captureDOM: (options: CaptureOptions) => {
     return ipcRenderer.invoke('captureDOM', options);
-  }
+  },
+  openDirectoryDialog: () => ipcRenderer.invoke('openDirectoryDialog')
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

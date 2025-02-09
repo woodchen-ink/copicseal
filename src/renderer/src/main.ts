@@ -17,6 +17,9 @@ if (!window.api) {
       console.log('captureDOM', options);
 
       return [];
+    },
+    openDirectoryDialog: async () => {
+      return '';
     }
   };
 
@@ -25,7 +28,7 @@ if (!window.api) {
 
 interface Output {
   path: string;
-  type?: 'jpeg' | 'png';
+  type?: 'jpeg' | 'png' | 'webp';
   quality?: number;
   width: number;
   height: number;

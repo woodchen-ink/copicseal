@@ -7,6 +7,7 @@ declare global {
     api: {
       onWinResized: (callback: () => void) => () => void;
       captureDOM: (options: CaptureOptions) => Promise<string[]>;
+      openDirectoryDialog: () => Promise<string>;
     };
   }
 }

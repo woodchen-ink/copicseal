@@ -6,11 +6,12 @@ import { is } from '@electron-toolkit/utils';
 
 interface Output {
   path: string;
-  type?: 'jpeg' | 'png';
+  type?: 'jpeg' | 'png' | 'webp';
   quality?: number;
   width: number;
   height: number;
   scale?: number;
+  rem?: number;
 }
 
 export interface CaptureOptions {
@@ -43,11 +44,27 @@ export async function handleCapture({ html, output }: CaptureOptions, retry = 1)
     await page.setContent(html);
 
     const outputPath = currentOutput.path; // 保存截图路径
+    console.log(currentOutput);
+    await page.evaluate((currentOutput) => {
+      if (currentOutput.rem) {
+        document.querySelector('html')!.style.fontSize = `${currentOutput.rem}px`;
+      }
+      const bgEl = document.querySelector<HTMLDivElement>('.background');
+      if (bgEl) {
+        Object.assign(bgEl.style, {
+          width: currentOutput.width + 'px',
+          height: currentOutput.height + 'px',
+          maxWidth: currentOutput.width + 'px',
+          maxHeight: currentOutput.height + 'px'
+        });
+      }
+    }, currentOutput);
+
     const vp = page.viewport();
     page.setViewport({
       deviceScaleFactor: currentOutput.scale,
-      width: currentOutput.width,
-      height: currentOutput.height
+      width: +currentOutput.width,
+      height: +currentOutput.height
     });
     // 截取特定元素
     await page.screenshot({
@@ -64,11 +81,14 @@ export async function handleCapture({ html, output }: CaptureOptions, retry = 1)
       page?.close().catch(() => {});
       page = null;
     }, 10 * 1000);
+    console.timeEnd('capture-div');
 
     return [outputPath, ...(await handleCapture({ html, output: output.slice(1) }))].filter(
       Boolean
     );
   } catch (e) {
+    console.timeEnd('capture-div');
+
     console.error(e);
     mainWindow?.destroy();
     page?.close().catch(() => {});
@@ -76,8 +96,6 @@ export async function handleCapture({ html, output }: CaptureOptions, retry = 1)
     if (retry > 0) {
       return handleCapture({ html, output }, retry - 1);
     }
-  } finally {
-    console.timeEnd('capture-div');
   }
   return [];
 }

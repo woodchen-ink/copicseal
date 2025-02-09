@@ -57,6 +57,7 @@ export class CoPic {
   usedExifKeys = ref<string[]>([]);
 
   addExifKey(key: string) {
+    if (['ImageWidth', 'ImageHeight'].includes(key)) return;
     if (!this.usedExifKeys.value.includes(key)) {
       this.usedExifKeys.value.push(key);
       this.modifiedExif.value[key] = this.exif.value?.[key] || '';

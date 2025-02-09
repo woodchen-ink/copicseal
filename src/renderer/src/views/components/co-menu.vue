@@ -18,7 +18,19 @@ const { currentCoPic, currentIndex, list } = injectCoPic();
 const progress = injectProgress();
 
 async function exportToImage() {
+  const { outputs, background, outputPath } = currentCoPic.value.getSettings();
+  if (!outputPath) {
+    return alert('请先设置导出目录');
+  }
   const renderEl = document.querySelector('.co-render')!;
+  const bgEl = document.querySelector<HTMLDivElement>('.background')!;
+  const bgStyle = Object.assign({}, bgEl.style);
+  Object.assign(bgEl.style, {
+    width: '',
+    height: '',
+    minWidth: '',
+    minHeight: ''
+  });
   const tplEl = renderEl.querySelector<HTMLDivElement>('[data-co-tpl]')!;
   const style = tplEl
     ? Array.from(document.querySelectorAll('style')).find((style) =>
@@ -36,15 +48,44 @@ async function exportToImage() {
     ${style?.outerHTML}
     ${renderEl.outerHTML}
   `;
+  Object.assign(bgEl.style, {
+    width: bgStyle.width,
+    height: bgStyle.height,
+    minWidth: bgStyle.minWidth,
+    minHeight: bgStyle.minHeight
+  });
   const res = await window.api.captureDOM({
     html,
     output: [
-      {
-        path: '/Users/kohai/projects/git/comark-desktop/out/screenshot1.jpg',
-        scale: 8,
-        width: ~~width,
-        height: ~~height
-      }
+      ...outputs.map((output) => {
+        output = { ...output };
+        let fs = parseFloat(fontSize);
+        const outputRatio = output.width / output.height;
+        const containerRatio = width / height;
+        if (outputRatio > containerRatio) {
+          fs = (output.height / height) * fs;
+        } else {
+          fs = (output.width / width) * fs;
+        }
+        if (background.mode === 'none') {
+          if (outputRatio > containerRatio) {
+            output.width = Math.floor(output.height * containerRatio);
+          } else {
+            output.height = Math.floor(output.width / containerRatio);
+          }
+        }
+        return {
+          ...output,
+          rem: fs,
+          path: outputPath + '/screenshot1@' + output.scale + 'x.' + output.type
+        };
+      })
+      // {
+      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot1.jpg',
+      //   scale: 8,
+      //   width: ~~width,
+      //   height: ~~height
+      // }
       // {
       //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot11.jpg',
       //   type: 'jpeg',

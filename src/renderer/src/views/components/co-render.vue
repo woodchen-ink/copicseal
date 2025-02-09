@@ -46,16 +46,19 @@ export default defineComponent({
     });
 
     const bgImgStyle = computed<CSSProperties>(() => {
-      const { mode, style, padding, image, color } = props.settings.background;
+      const { mode, style, image, color } = props.settings.background;
 
       if (mode === 'none') {
         return {};
       }
 
+      const blur =
+        parseFloat(String(image?.filters?.find((it) => it.type === 'blur')?.value || 0)) * 2;
+
       return {
         zIndex: -1,
         position: 'absolute',
-        inset: '-' + padding?.[0] + 'rem',
+        inset: '-' + blur + 'rem',
         background: mode === 'image' ? `url(${props.imgUrl})` : color?.rgba,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
