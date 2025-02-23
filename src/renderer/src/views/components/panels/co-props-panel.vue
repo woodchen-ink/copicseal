@@ -2,18 +2,21 @@
   <CoSettingsPanel v-if="currentCoPic" title="参数" @undo="() => currentCoPic.resetModifiedExif()">
     <div class="camera-info">
       <template v-for="key in usedExifKeys" :key="key">
-        <div class="label">{{ getExifName(key) }}:</div>
+        <div class="label">
+          {{ getExifName(key) }}:
+        </div>
         <div class="value">
-          <input v-model="currentCoPic.modifiedExif.value[key]" type="text" />
+          <input v-model="currentCoPic.modifiedExif.value[key]" type="text">
         </div>
       </template>
     </div>
   </CoSettingsPanel>
 </template>
+
 <script lang="ts" setup>
-import { computed } from 'vue';
 import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
-import { injectCoPic, getExifName } from '@renderer/uses';
+import { getExifName, injectCoPic } from '@renderer/uses';
+import { computed } from 'vue';
 
 const { currentCoPic } = injectCoPic();
 

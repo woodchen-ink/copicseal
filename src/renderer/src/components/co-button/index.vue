@@ -1,8 +1,9 @@
 <template>
   <button class="co-button" :class="{ 'co-button--outline': outline, 'co-button--icon': icon }">
-    <slot></slot>
+    <slot />
   </button>
 </template>
+
 <script lang="ts" setup>
 defineProps<{
   outline?: boolean;

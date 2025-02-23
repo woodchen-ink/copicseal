@@ -1,34 +1,36 @@
 <script lang="tsx">
+import type { Tags } from '@/utils/exif';
+import type {
+  CSSProperties,
+  PropType,
+} from 'vue';
+import type { Settings } from '../../types';
+import { injectCoPic } from '@renderer/uses';
+import { mapStyle } from '@renderer/utils/common';
+import { renderUtils } from '@renderer/utils/render';
 import {
-  onMounted,
-  onBeforeUnmount,
-  ref,
   computed,
   defineComponent,
-  type CSSProperties,
-  PropType
+  onBeforeUnmount,
+  onMounted,
+  ref,
 } from 'vue';
-import { Settings } from '../../types';
-import { mapStyle } from '@renderer/utils/common';
-import { Tags } from '@/utils/exif';
 import TplDefault from '../tpls/tpl-default.vue';
-import { renderUtils } from '@renderer/utils/render';
-import { injectCoPic } from '@renderer/uses';
 
 export default defineComponent({
   props: {
     imgUrl: {
       type: String,
-      required: true
+      required: true,
     },
     settings: {
       type: Object as PropType<Settings>,
-      required: true
+      required: true,
     },
     exif: {
       type: Object as PropType<Tags>,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const isHorizontal = ref(true);
@@ -41,7 +43,7 @@ export default defineComponent({
         zIndex: 0,
         padding: mode === 'none' ? 0 : (padding ?? []).map((i: number) => `${i}rem`).join(' '),
         overflow: 'hidden',
-        ...mapStyle(style)
+        ...mapStyle(style),
       };
     });
 
@@ -52,20 +54,20 @@ export default defineComponent({
         return {};
       }
 
-      const blur =
-        parseFloat(String(image?.filters?.find((it) => it.type === 'blur')?.value || 0)) * 2;
+      const blur
+        = Number.parseFloat(String(image?.filters?.find(it => it.type === 'blur')?.value || 0)) * 2;
 
       return {
         zIndex: -1,
         position: 'absolute',
-        inset: '-' + blur + 'rem',
+        inset: `-${blur}rem`,
         background: mode === 'image' ? `url(${props.imgUrl})` : color?.rgba,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         filter:
-          mode === 'image' ? image?.filters?.map((it) => `${it.type}(${it.value})`).join(' ') : '',
+          mode === 'image' ? image?.filters?.map(it => `${it.type}(${it.value})`).join(' ') : '',
         pointerEvents: 'none',
-        ...mapStyle(style)
+        ...mapStyle(style),
       };
     });
 
@@ -105,14 +107,14 @@ export default defineComponent({
           currentCoPic.value.addExifKey(key);
 
           return target[key];
-        }
+        },
       };
       const info = new Proxy(
         Object.keys(props.exif).reduce((acc, key) => {
           acc[key] = props.exif[key] || '';
           return acc;
         }, {} as Tags),
-        handler
+        handler,
       );
 
       return (
@@ -164,7 +166,7 @@ export default defineComponent({
     async function calcSize(
       _wrapper: HTMLDivElement,
       containerEl: HTMLDivElement,
-      [ow, oh]: number[]
+      [ow, oh]: number[],
     ) {
       containerEl.style.width = '';
       containerEl.style.height = '';
@@ -174,7 +176,8 @@ export default defineComponent({
       document.querySelector('html')!.style.fontSize = `${initialWidth}px`;
 
       const mainImage = containerEl.querySelector<HTMLDivElement>('.main-image');
-      if (!mainImage) return;
+      if (!mainImage)
+        return;
 
       const [iw, ih] = await getImgSize();
       console.log(iw, ih);
@@ -220,7 +223,8 @@ export default defineComponent({
 
     function getImgSize() {
       const { ImageWidth, ImageHeight } = props.exif;
-      if (ImageWidth && ImageHeight) return [+ImageWidth, +ImageHeight];
+      if (ImageWidth && ImageHeight)
+        return [+ImageWidth, +ImageHeight];
 
       const img = new Image();
       img.src = props.imgUrl;
@@ -242,6 +246,6 @@ export default defineComponent({
         </div>
       </div>
     );
-  }
+  },
 });
 </script>

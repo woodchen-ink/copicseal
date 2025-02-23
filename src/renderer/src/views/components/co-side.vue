@@ -35,12 +35,12 @@
 </template>
 
 <script lang="ts" setup>
+import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
+import { injectCoPic, primaryExif } from '@/uses';
 import { ElScrollbar } from 'element-plus';
+import CoBgPanel from './panels/co-bg-panel.vue';
 import CoOutputPanel from './panels/co-output-panel.vue';
 import CoPropsPanel from './panels/co-props-panel.vue';
-import CoBgPanel from './panels/co-bg-panel.vue';
-import { injectCoPic, primaryExif } from '@/uses';
-import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
 
 const { currentCoPic } = injectCoPic();
 </script>

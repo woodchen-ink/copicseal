@@ -1,7 +1,9 @@
-import { type VNode, computed, ref } from 'vue';
-import { getExif, Tags } from './exif';
 import type { Settings } from '@/types';
-import CoRenderVue from '@renderer/views/components/co-render.vue';
+import type { VNode } from 'vue';
+import type { Tags } from './exif';
+import CoRenderVue from '@/views/components/co-render.vue';
+import { computed, reactive, ref } from 'vue';
+import { getExif } from './exif';
 
 export class CoPic {
   id = Math.random();
@@ -18,6 +20,10 @@ export class CoPic {
   modifiedExif = ref<Tags>({});
   outputExif = computed(() => ({ ...this.exif.value, ...this.modifiedExif.value }));
   isLoaded = ref(false);
+
+  state = reactive({
+    settings: {},
+  });
 
   constructor(file: File) {
     this.file = file;
@@ -38,7 +44,7 @@ export class CoPic {
 
     this.settings = {
       ...this.settings,
-      ...settings
+      ...settings,
     };
     // this.settings.fields = fillId(this.settings.fields ?? []);
     this.isLoaded.value = false;
@@ -57,7 +63,8 @@ export class CoPic {
   usedExifKeys = ref<string[]>([]);
 
   addExifKey(key: string) {
-    if (['ImageWidth', 'ImageHeight'].includes(key)) return;
+    if (['ImageWidth', 'ImageHeight'].includes(key))
+      return;
     if (!this.usedExifKeys.value.includes(key)) {
       this.usedExifKeys.value.push(key);
       this.modifiedExif.value[key] = this.exif.value?.[key] || '';
@@ -71,7 +78,8 @@ export class CoPic {
   }
 
   update() {
-    if (!this.vNode) this.vNode = this.renderNode();
+    if (!this.vNode)
+      this.vNode = this.renderNode();
     return this.vNode;
   }
 
@@ -91,10 +99,11 @@ export class CoPic {
   private renderNode() {
     this.asyncLoad();
     return () => {
-      if (this.isLoaded.value)
+      if (this.isLoaded.value) {
         return (
           <CoRenderVue imgUrl={this.imgUrl} settings={this.settings} exif={this.outputExif.value} />
         );
+      }
       return <Loading imgUrl={this.imgUrl} />;
     };
   }
@@ -133,7 +142,7 @@ function Loading(props: { imgUrl: string }) {
         justifyContent: 'center',
         alignItems: 'center',
         color: '#eee',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       <div
@@ -144,12 +153,13 @@ function Loading(props: { imgUrl: string }) {
           backgroundPosition: 'center',
           backgroundSize: 'cover',
           opacity: 0.4,
-          filter: `brightness(0.4) blur(${20}px)`
+          filter: `brightness(0.4) blur(${20}px)`,
         }}
-      ></div>
+      >
+      </div>
       <span
         style={{
-          position: 'relative'
+          position: 'relative',
         }}
       >
         加载中（页面可能会卡顿）...

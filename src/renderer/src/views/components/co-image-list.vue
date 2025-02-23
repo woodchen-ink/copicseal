@@ -7,24 +7,25 @@
       :class="{ active: item.id === currentCoPic?.id }"
       @click="handleClickItem(i)"
     >
-      <img :src="item.imgUrl" alt="" />
+      <img :src="item.imgUrl" alt="">
     </div>
     <CoFileInput mini @change="handleFileChange" />
   </ElScrollbar>
 </template>
 
 <script lang="ts" setup>
-import { ElScrollbar } from 'element-plus';
-import { ref } from 'vue';
 import CoFileInput from '@/components/co-file-input/index.vue';
 import { injectCoPic } from '@/uses';
 import { CoPic } from '@/utils/co-pic';
+import { ElScrollbar } from 'element-plus';
+import { ref } from 'vue';
 
 const { list, push, setCurrentIndex, currentCoPic } = injectCoPic();
 const el = ref<InstanceType<typeof ElScrollbar>>();
 
 function handleFileChange(files: File[]) {
-  if (!files.length) return;
+  if (!files.length)
+    return;
 
   files.forEach((file) => {
     push(new CoPic(file));
@@ -36,7 +37,8 @@ function handleClickItem(index: number) {
 }
 
 function handleScroll(e: WheelEvent) {
-  if (e.shiftKey || !el.value || !e.deltaY) return;
+  if (e.shiftKey || !el.value || !e.deltaY)
+    return;
 
   e.preventDefault();
   let scrollLeft = el.value.wrapRef?.scrollLeft ?? 0;

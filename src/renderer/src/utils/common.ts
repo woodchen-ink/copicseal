@@ -1,17 +1,19 @@
+import type { Style } from '@renderer/types';
 import type { Tags } from 'exifreader';
+import type { CSSProperties } from 'vue';
 import { parse } from 'csv-parse/browser/esm';
-import { Style } from '@renderer/types';
-import { CSSProperties } from 'vue';
 
 export function transToPx(val: string | number, relativeSize: number) {
-  if (typeof val === 'string' && /^\d+(\.\d+)?$/g.test(val)) val = Number(val);
+  if (typeof val === 'string' && /^\d+(?:\.\d+)?$/.test(val))
+    val = Number(val);
 
   if (typeof val === 'number') {
-    if (val < 1 && val > 0) return Math.round(val * relativeSize);
+    if (val < 1 && val > 0)
+      return Math.round(val * relativeSize);
 
     return val;
   }
-  if (/\d+(\.\d+)?%$/.test(val))
+  if (/\d+(?:\.\d+)?%$/.test(val))
     return Math.round((Number(val.replace('%', '')) / 100) * relativeSize);
 
   return Math.round(Number(val.replace(/\d+/g, '')));
@@ -32,11 +34,12 @@ export function toImgInfo(exif: Tags) {
     'Image Width': ImageWidth,
     'Image Height': ImageHeight,
     'Device Manufacturer': DeviceManufacturer,
-    LensModel
+    LensModel,
   } = exif;
 
   const getVal = (val: any) => {
-    if (Array.isArray(val)) return val.reduce((p, c) => p / c);
+    if (Array.isArray(val))
+      return val.reduce((p, c) => p / c);
     return `${val ?? 0}`;
   };
 
@@ -50,7 +53,7 @@ export function toImgInfo(exif: Tags) {
     fNumber: Number(getVal(FNumber?.value) ?? 0),
     make: String(Make?.value ?? DeviceManufacturer?.value ?? ''),
     model: String(Model?.value ?? (LensModel?.value as string)?.split(' ').shift() ?? ''),
-    whiteBalance: Number(WhiteBalance?.value ?? 0)
+    whiteBalance: Number(WhiteBalance?.value ?? 0),
   };
 
   res.make = res.make
@@ -82,8 +85,8 @@ export function scaleSize<T extends object>(obj: T, scale: number): T {
   for (const key in obj) {
     let val = obj[key];
     if (typeof val === 'number') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // eslint-disable-next-line ts/ban-ts-comment
+      // @ts-expect-error
       val *= scale;
     }
 
@@ -101,9 +104,10 @@ export function getMakeLogoPath(make?: string) {
     NIKON: 'nikon',
     Panasonic: 'lumix',
     Leica: 'leica',
-    OM: 'olympus'
+    OM: 'olympus',
   };
-  if (!make || !logoMap[make]) return;
+  if (!make || !logoMap[make])
+    return;
 
   const url = `/logo/${logoMap[make]}.svg`;
   return url;
@@ -111,15 +115,17 @@ export function getMakeLogoPath(make?: string) {
 
 export function loadMPModels() {
   const MPModels = localStorage.getItem('MPModels');
-  if (MPModels) return JSON.parse(MPModels) as string[][];
+  if (MPModels)
+    return JSON.parse(MPModels) as string[][];
 
-  const url =
-    'https://raw.githubusercontent.com/KHwang9883/MobileModels-csv/refs/heads/main/models.csv';
+  const url
+    = 'https://raw.githubusercontent.com/KHwang9883/MobileModels-csv/refs/heads/main/models.csv';
   fetch(url)
-    .then((res) => res.text())
+    .then(res => res.text())
     .then((res) => {
       parse(res, {}, (err, data) => {
-        if (!err && data) localStorage.setItem('MPModels', JSON.stringify(data));
+        if (!err && data)
+          localStorage.setItem('MPModels', JSON.stringify(data));
       });
     });
   return [];
@@ -151,8 +157,8 @@ export function getStyleFromMap(map: StylePropertyMapReadOnly) {
       map
         .get('font-size')
         ?.toString()
-        .replace(/[^\d.]+/g, '') || 0
-    )
+        .replace(/[^\d.]+/g, '') || 0,
+    ),
   };
 }
 

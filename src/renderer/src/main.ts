@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
-import 'element-plus/theme-chalk/index.css';
-
 import App from './App.vue';
+
+import 'element-plus/theme-chalk/index.css';
 
 const app = createApp(App);
 
@@ -20,7 +20,7 @@ if (!window.api) {
     },
     openDirectoryDialog: async () => {
       return '';
-    }
+    },
   };
 
   window.api = api;

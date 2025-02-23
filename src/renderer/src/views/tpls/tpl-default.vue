@@ -4,14 +4,14 @@
       class="main-image"
       :style="{
         display: 'block',
-        margin: '0 auto'
+        margin: '0 auto',
       }"
       :src="imgUrl"
-    />
+    >
     <div class="card-info">
       <div class="make-model">
         <div class="make-logo">
-          <img v-if="utils.getMakeLogo(info.Make)" :src="utils.getMakeLogo(info.Make)" alt="" />
+          <img v-if="utils.getMakeLogo(info.Make)" :src="utils.getMakeLogo(info.Make)" alt="">
           <span v-else>{{ info.Make }}</span>
         </div>
         <div class="model-name">
@@ -29,23 +29,24 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { computed } from 'vue';
 
 const props = defineProps({
   utils: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   imgUrl: String,
   info: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   borderPadding: {
     type: [Number, String],
-    default: 0
-  }
+    default: 0,
+  },
 });
 
 const isHorizontal = computed(() => {

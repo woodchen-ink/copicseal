@@ -4,13 +4,12 @@
       <IconImage class="icon" />
       <div class="title">拖动图像</div>
       <div class="desc">
-        或从您的电脑中<span class="link"
-          >选择一项或多项<input
-            type="file"
-            accept="image/*"
-            multiple
-            @change="handleChange" /></span
-        >并开始使用。
+        或从您的电脑中<span class="link">选择一项或多项<input
+          type="file"
+          accept="image/*"
+          multiple
+          @change="handleChange"
+        ></span>并开始使用。
       </div>
     </label>
   </div>
@@ -28,12 +27,14 @@ const emit = defineEmits<{
 }>();
 
 function handleDrop(e: DragEvent) {
-  if (e.dataTransfer?.files.length) emit('change', Array.from(e.dataTransfer.files));
+  if (e.dataTransfer?.files.length)
+    emit('change', Array.from(e.dataTransfer.files));
 }
 
 function handleChange(e: Event) {
   const target = e.target as HTMLInputElement;
-  if (target.files?.length) emit('change', Array.from(target.files));
+  if (target.files?.length)
+    emit('change', Array.from(target.files));
   target.value = '';
 }
 </script>

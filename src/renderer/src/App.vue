@@ -1,14 +1,14 @@
-<script setup lang="ts">
-import 'element-plus/theme-chalk/el-scrollbar.css';
-import { provideCoPic } from './uses';
-import CoMark from './views/co-mark.vue';
-
-provideCoPic();
-</script>
-
 <template>
   <CoMark />
 </template>
+
+<script setup lang="ts">
+import { provideCoPic } from './uses';
+import CoMark from './views/co-mark.vue';
+import 'element-plus/theme-chalk/el-scrollbar.css';
+
+provideCoPic();
+</script>
 
 <style lang="scss" scoped></style>
 

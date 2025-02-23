@@ -1,7 +1,8 @@
+import type { Tags as RawTags } from 'exifreader';
 // import Exif from 'exif-js'
-import ExifReader, { type Tags as RawTags } from 'exifreader';
+import ExifReader from 'exifreader';
 // import piexif from 'piexifjs';
-export { ImageIFD, TAGS, type ExifDict } from 'piexifjs';
+export { type ExifDict, ImageIFD, TAGS } from 'piexifjs';
 // export type ExifDict = piexif.ExifDict
 
 // window.n = window.n ?? undefined
@@ -36,51 +37,29 @@ export async function getExif(file: File) {
   // })
 }
 
-function formatExif(exif: RawTags): Tags {
-  const tags: Tags = {};
-  for (const key in exif) {
-    const val = exif[key];
-
-    if (typeof val === 'string') {
-      tags[key] = val;
-    } else if (typeof val.value === 'number') {
-      tags[key] = val.value;
-    } else if (val.description) {
-      tags[key] = val.description;
-    }
-  }
-  for (const key in exif) {
-    if (exifKeyFormatter[key]) {
-      Object.assign(tags, exifKeyFormatter[key](exif));
-    }
-  }
-
-  return tags;
-}
-
 const exifKeyFormatter: Record<keyof RawTags, (exif: RawTags) => Tags> = {
-  ['Image Width']: (exif) => {
+  'Image Width': (exif) => {
     const val = +(exif['Image Width']?.value || 0);
     if (exif.Orientation?.value && +exif.Orientation.value > 4) {
       return { ImageHeight: val };
     }
     return { ImageWidth: val };
   },
-  ['Image Height']: (exif) => {
+  'Image Height': (exif) => {
     const val = +(exif['Image Height']?.value || 0);
     if (exif.Orientation?.value && +exif.Orientation.value > 4) {
       return { ImageWidth: val };
     }
     return { ImageHeight: val };
   },
-  FocalLength: (exif) => {
+  'FocalLength': (exif) => {
     return {
-      FocalLength: exif.FocalLength?.description.replace(' ', '')
+      FocalLength: exif.FocalLength?.description.replace(' ', ''),
     };
-  }
+  },
 };
 
-export const ExifPrimaryKeys = [
+export const exifPrimaryKeys = [
   'ImageWidth',
   'ImageHeight',
   'Make',
@@ -95,13 +74,37 @@ export const ExifPrimaryKeys = [
   'ExposureMode',
   'WhiteBalance',
   'MeteringMode',
-  'ISOSpeedRatings'
+  'ISOSpeedRatings',
 ] as const;
 
-export type ExifPrimaryKeys = (typeof ExifPrimaryKeys)[number];
+export type ExifPrimaryKeys = (typeof exifPrimaryKeys)[number];
 
 export type Tags = {
   [key in ExifPrimaryKeys]?: string | number;
 } & {
   [key: string]: string | number | undefined;
 };
+
+function formatExif(exif: RawTags): Tags {
+  const tags: Tags = {};
+  for (const key in exif) {
+    const val = exif[key];
+
+    if (typeof val === 'string') {
+      tags[key] = val;
+    }
+    else if (typeof val.value === 'number') {
+      tags[key] = val.value;
+    }
+    else if (val.description) {
+      tags[key] = val.description;
+    }
+  }
+  for (const key in exif) {
+    if (exifKeyFormatter[key]) {
+      Object.assign(tags, exifKeyFormatter[key](exif));
+    }
+  }
+
+  return tags;
+}

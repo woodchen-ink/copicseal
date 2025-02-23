@@ -1,6 +1,6 @@
-import { contextBridge, ipcRenderer } from 'electron/renderer';
-import { electronAPI } from '@electron-toolkit/preload';
 import type { CaptureOptions } from '../main/utils/capture';
+import { electronAPI } from '@electron-toolkit/preload';
+import { contextBridge, ipcRenderer } from 'electron/renderer';
 
 // Custom APIs for renderer
 const api = {
@@ -11,7 +11,7 @@ const api = {
   captureDOM: (options: CaptureOptions) => {
     return ipcRenderer.invoke('captureDOM', options);
   },
-  openDirectoryDialog: () => ipcRenderer.invoke('openDirectoryDialog')
+  openDirectoryDialog: () => ipcRenderer.invoke('openDirectoryDialog'),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -21,12 +21,14 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('api', api);
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error);
   }
-} else {
-  // @ts-ignore (define in dts)
+}
+else {
+  // @ts-expect-error (define in dts)
   window.electron = electronAPI;
-  // @ts-ignore (define in dts)
+  // @ts-expect-error (define in dts)
   window.api = api;
 }

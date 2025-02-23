@@ -1,8 +1,9 @@
-import { app, BrowserWindow } from 'electron';
-import path, { join } from 'path';
-import pie from 'puppeteer-in-electron';
-import puppeteer, { type Page } from 'puppeteer-core';
+import type { Page } from 'puppeteer-core';
+import path, { join } from 'node:path';
 import { is } from '@electron-toolkit/utils';
+import { app, BrowserWindow } from 'electron';
+import puppeteer from 'puppeteer-core';
+import pie from 'puppeteer-in-electron';
 
 interface Output {
   path: string;
@@ -52,10 +53,10 @@ export async function handleCapture({ html, output }: CaptureOptions, retry = 1)
       const bgEl = document.querySelector<HTMLDivElement>('.background');
       if (bgEl) {
         Object.assign(bgEl.style, {
-          width: currentOutput.width + 'px',
-          height: currentOutput.height + 'px',
-          maxWidth: currentOutput.width + 'px',
-          maxHeight: currentOutput.height + 'px'
+          width: `${currentOutput.width}px`,
+          height: `${currentOutput.height}px`,
+          maxWidth: `${currentOutput.width}px`,
+          maxHeight: `${currentOutput.height}px`,
         });
       }
     }, currentOutput);
@@ -64,13 +65,13 @@ export async function handleCapture({ html, output }: CaptureOptions, retry = 1)
     page.setViewport({
       deviceScaleFactor: currentOutput.scale,
       width: +currentOutput.width,
-      height: +currentOutput.height
+      height: +currentOutput.height,
     });
     // 截取特定元素
     await page.screenshot({
       path: outputPath,
       type: currentOutput.type,
-      quality: currentOutput.quality
+      quality: currentOutput.quality,
     });
     page.setViewport(vp);
     console.log('截图完成', outputPath);
@@ -84,9 +85,10 @@ export async function handleCapture({ html, output }: CaptureOptions, retry = 1)
     console.timeEnd('capture-div');
 
     return [outputPath, ...(await handleCapture({ html, output: output.slice(1) }))].filter(
-      Boolean
+      Boolean,
     );
-  } catch (e) {
+  }
+  catch (e) {
     console.timeEnd('capture-div');
 
     console.error(e);
@@ -114,8 +116,8 @@ async function createWindow() {
     hiddenInMissionControl: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
+      sandbox: false,
+    },
   });
 
   mainWindow.setPosition(0, 0);
@@ -123,9 +125,10 @@ async function createWindow() {
   mainWindow.blur();
 
   // 加载原有页面防止 blob url 图片跨域
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
-  } else {
+  if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+    mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL);
+  }
+  else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
   await new Promise<BrowserWindow>((resolve) => {
@@ -133,11 +136,11 @@ async function createWindow() {
       resolve(mainWindow!);
     });
   });
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // eslint-disable-next-line ts/ban-ts-comment
+  // @ts-expect-error
   const browser = await pie.connect(app, puppeteer);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // eslint-disable-next-line ts/ban-ts-comment
+  // @ts-expect-error
   const page: Page = await pie.getPage(browser, mainWindow);
 
   return page;

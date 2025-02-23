@@ -1,10 +1,11 @@
-import { type InjectionKey, Ref, computed, inject, provide, ref, shallowRef } from 'vue';
-import { cloneDeep } from 'lodash';
+import type { InjectionKey, Ref } from 'vue';
+import type { Settings } from './types';
 import type { CoPic } from './utils/co-pic';
-import { Settings } from './types';
+import { cloneDeep } from 'lodash';
+import { computed, inject, provide, ref, shallowRef } from 'vue';
 
-const CoPicInjectionKey: InjectionKey<ReturnType<typeof getCoPicList>> =
-  Symbol('CoPicInjectionKey');
+const CoPicInjectionKey: InjectionKey<ReturnType<typeof getCoPicList>>
+  = Symbol('CoPicInjectionKey');
 
 export function provideCoPic() {
   const coPicList = getCoPicList();
@@ -29,7 +30,7 @@ export function provideProgress() {
     },
     onFinish: () => {
       progress.value.visible = false;
-    }
+    },
   });
   provide(ProgressInjectionKey, progress);
 
@@ -45,8 +46,8 @@ export function injectProgress() {
       filename: '',
       visible: false,
       onCancel: () => {},
-      onFinish: () => {}
-    })
+      onFinish: () => {},
+    }),
   );
 }
 
@@ -62,7 +63,7 @@ function getCoPicList() {
 
   function setSettings(_settings: Settings) {
     settings.value = _settings;
-    list.value.forEach((item) => item.setSettings(cloneDeep(_settings)));
+    list.value.forEach(item => item.setSettings(cloneDeep(_settings)));
   }
 
   function push(pic: CoPic) {
@@ -78,7 +79,7 @@ function getCoPicList() {
     setCurrentIndex,
     settings,
     setSettings,
-    push
+    push,
   };
 }
 
@@ -91,30 +92,30 @@ function getDefaultSettings(): Settings {
         filters: [
           {
             type: 'blur',
-            value: '0.04rem'
+            value: '0.04rem',
           },
           {
             type: 'brightness',
-            value: '100%'
-          }
-        ]
+            value: '100%',
+          },
+        ],
       },
       style: {
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
       },
-      padding: [0.1, 0.1]
+      padding: [0.1, 0.1],
     },
     outputs: [
       {
         scale: 1,
         width: 1920,
         height: 1080,
-        type: 'jpeg'
-      }
+        type: 'jpeg',
+      },
     ],
-    outputPath: ''
+    outputPath: '',
   };
 }
 
@@ -131,9 +132,9 @@ export const primaryExif = [
   { name: '曝光模式', key: 'ExposureMode' },
   { name: '白平衡', key: 'WhiteBalance' },
   { name: '测光模式', key: 'MeteringMode' },
-  { name: '感光度', key: 'ISOSpeedRatings' }
+  { name: '感光度', key: 'ISOSpeedRatings' },
 ];
 
-export const getExifName = (key: string) => {
-  return primaryExif.find((item) => item.key === key)?.name || key;
-};
+export function getExifName(key: string) {
+  return primaryExif.find(item => item.key === key)?.name || key;
+}

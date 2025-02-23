@@ -2,16 +2,15 @@
   "name": "comark",
   "version": "0.0.0-alpha.0",
   "description": "A simple image processing tool for Windows and macOS.",
-  "main": "./out/main/index.js",
   "author": {
     "name": "kohai",
     "email": "i@kohai.top",
     "url": "https://kohai.top"
   },
   "homepage": "https://comark.kohai.top",
+  "main": "./out/main/index.js",
   "scripts": {
-    "format": "prettier --write .",
-    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
+    "lint": "eslint . --fix",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
@@ -38,10 +37,12 @@
     "puppeteer-in-electron": "^3.0.5"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^4.2.0",
     "@electron-toolkit/eslint-config": "^1.0.2",
     "@electron-toolkit/eslint-config-ts": "^2.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@rushstack/eslint-patch": "^1.10.3",
+    "@stylistic/eslint-plugin-js": "^3.1.0",
     "@types/node": "^20.14.8",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitejs/plugin-vue-jsx": "^4.0.1",

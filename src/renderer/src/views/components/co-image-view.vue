@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ElScrollbar } from 'element-plus';
 import { injectCoPic } from '@/uses';
+import { ElScrollbar } from 'element-plus';
 
 const { currentCoPic } = injectCoPic();
 </script>

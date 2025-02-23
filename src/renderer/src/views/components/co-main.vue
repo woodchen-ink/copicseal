@@ -8,9 +8,9 @@
 </template>
 
 <script lang="ts" setup>
+import CoImageList from './co-image-list.vue';
 // import { ref } from 'vue';
 import CoImageView from './co-image-view.vue';
-import CoImageList from './co-image-list.vue';
 // const video = ref<HTMLVideoElement>();
 
 // function a() {

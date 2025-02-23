@@ -8,10 +8,10 @@
         <div class="title">
           {{ title }}
         </div>
-        <div style="flex: 1"></div>
-        <CoButton v-if="onUndo" icon title="还原" @click.prevent.stop="onUndo"
-          ><Undo style="font-size: 20px"
-        /></CoButton>
+        <div style="flex: 1" />
+        <CoButton v-if="onUndo" icon title="还原" @click.prevent.stop="onUndo">
+          <Undo style="font-size: 20px" />
+        </CoButton>
       </template>
       <slot />
     </ElCollapseItem>
@@ -20,12 +20,12 @@
 
 <script lang="ts" setup>
 import { ElCollapse, ElCollapseItem } from 'element-plus';
+import CoButton from '../co-button/index.vue';
+import { Undo } from '../co-icon';
+import IconArrowDown from './components/icon-arrow-down.vue';
 import 'element-plus/theme-chalk/base.css';
 import 'element-plus/theme-chalk/el-collapse.css';
 import 'element-plus/theme-chalk/el-collapse-item.css';
-import IconArrowDown from './components/icon-arrow-down.vue';
-import { Undo } from '../co-icon';
-import CoButton from '../co-button/index.vue';
 
 defineProps<{
   title: string;

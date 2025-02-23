@@ -1,16 +1,22 @@
 <template>
   <div class="co-menu">
-    <div v-if="list.length">{{ currentCoPic.name }}({{ currentIndex + 1 }}/{{ list.length }})</div>
     <div v-if="list.length">
-      <CoButton outline @click="handleExport()">导出</CoButton>
-      <CoButton outline @click="handleExportAll()">导出全部</CoButton>
+      {{ currentCoPic.name }}({{ currentIndex + 1 }}/{{ list.length }})
+    </div>
+    <div v-if="list.length">
+      <CoButton outline @click="handleExport()">
+        导出
+      </CoButton>
+      <CoButton outline @click="handleExportAll()">
+        导出全部
+      </CoButton>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { injectCoPic, injectProgress } from '@/uses';
 import CoButton from '@/components/co-button/index.vue';
+import { injectCoPic, injectProgress } from '@/uses';
 import { nextTick } from 'vue';
 
 const { currentCoPic, currentIndex, list } = injectCoPic();
@@ -20,6 +26,7 @@ const progress = injectProgress();
 async function exportToImage() {
   const { outputs, background, outputPath } = currentCoPic.value.getSettings();
   if (!outputPath) {
+    // eslint-disable-next-line no-alert
     return alert('请先设置导出目录');
   }
   const renderEl = document.querySelector('.co-render')!;
@@ -29,18 +36,18 @@ async function exportToImage() {
     width: '',
     height: '',
     minWidth: '',
-    minHeight: ''
+    minHeight: '',
   });
   const tplEl = renderEl.querySelector<HTMLDivElement>('[data-co-tpl]')!;
   const style = tplEl
-    ? Array.from(document.querySelectorAll('style')).find((style) =>
-        style.innerText.includes('[' + tplEl.dataset.coTpl + ']')
+    ? Array.from(document.querySelectorAll('style')).find(style =>
+        style.textContent?.includes(`[${tplEl.dataset.coTpl}]`),
       )
     : document.querySelector('style#co-style');
 
   const { width, height } = renderEl.getBoundingClientRect()!;
   const fontSize = document.querySelector('html')!.style.fontSize;
-  await new Promise((r) => setTimeout(r, 20));
+  await new Promise(r => setTimeout(r, 20));
   console.time('capture');
   const html = `
     <style>html{ font-size: ${fontSize}; }</style>
@@ -52,34 +59,36 @@ async function exportToImage() {
     width: bgStyle.width,
     height: bgStyle.height,
     minWidth: bgStyle.minWidth,
-    minHeight: bgStyle.minHeight
+    minHeight: bgStyle.minHeight,
   });
   const res = await window.api.captureDOM({
     html,
     output: [
       ...outputs.map((output) => {
         output = { ...output };
-        let fs = parseFloat(fontSize);
+        let fs = Number.parseFloat(fontSize);
         const outputRatio = output.width / output.height;
         const containerRatio = width / height;
         if (outputRatio > containerRatio) {
           fs = (output.height / height) * fs;
-        } else {
+        }
+        else {
           fs = (output.width / width) * fs;
         }
         if (background.mode === 'none') {
           if (outputRatio > containerRatio) {
             output.width = Math.floor(output.height * containerRatio);
-          } else {
+          }
+          else {
             output.height = Math.floor(output.width / containerRatio);
           }
         }
         return {
           ...output,
           rem: fs,
-          path: outputPath + '/screenshot1@' + output.scale + 'x.' + output.type
+          path: `${outputPath}/screenshot1@${output.scale}x.${output.type}`,
         };
-      })
+      }),
       // {
       //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot1.jpg',
       //   scale: 8,
@@ -113,7 +122,7 @@ async function exportToImage() {
       //   width: ~~width,
       //   height: ~~height
       // }
-    ]
+    ],
   });
   console.timeEnd('capture');
   console.log(res);
@@ -133,12 +142,13 @@ async function handleExportAll() {
   progress.value.visible = true;
   await list.value.reduce(async (p, _pic, index) => {
     await p;
-    if (!progress.value.visible) return;
+    if (!progress.value.visible)
+      return;
     currentIndex.value = index;
     progress.value.current = index;
     progress.value.total = list.value.length;
     progress.value.filename = currentCoPic.value.name;
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 300));
     await nextTick();
     await exportToImage();
     progress.value.current += 1;

@@ -5,13 +5,15 @@
       <div>倍数：</div>
       <div>类型：</div>
       <div class="btn">
-        <CoButton icon @click="handleAdd">+</CoButton>
+        <CoButton icon @click="handleAdd">
+          +
+        </CoButton>
       </div>
       <template v-for="(item, index) in outputs" :key="index">
         <div class="width-height">
-          <input v-model="item.width" type="text" />
+          <input v-model="item.width" type="text">
           <div>*</div>
-          <input v-model="item.height" type="text" />
+          <input v-model="item.height" type="text">
         </div>
         <div>
           <select v-model="item.scale">
@@ -28,7 +30,9 @@
           </select>
         </div>
         <div class="btn">
-          <CoButton v-show="outputs.length > 1" icon @click="handleDel(index)"><Delete /></CoButton>
+          <CoButton v-show="outputs.length > 1" icon @click="handleDel(index)">
+            <Delete />
+          </CoButton>
         </div>
       </template>
     </div>
@@ -37,17 +41,20 @@
       <span>{{ outputPath }}</span>
     </div>
     <div class="btns">
-      <CoButton outline>应用全部</CoButton>
+      <CoButton outline>
+        应用全部
+      </CoButton>
     </div>
   </CoSettingsPanel>
 </template>
+
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
-import { injectCoPic } from '@renderer/uses';
+import type { Output } from '@/types';
 import CoButton from '@/components/co-button/index.vue';
 import { Delete } from '@/components/co-icon/index';
-import { Output } from '@/types';
+import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
+import { injectCoPic } from '@renderer/uses';
+import { ref, watch } from 'vue';
 
 const { currentCoPic } = injectCoPic();
 
@@ -64,25 +71,26 @@ watch(currentCoPic, (value) => {
   }
 });
 
-const handleAdd = () => {
+function handleAdd() {
   outputs.value.push({
     scale: 1,
     width: 1920,
     height: 1080,
-    type: 'jpeg'
+    type: 'jpeg',
   });
-};
+}
 
-const handleDel = (index: number) => {
+function handleDel(index: number) {
   outputs.value.splice(index, 1);
-};
+}
 
-const handleOutputFolder = async () => {
+async function handleOutputFolder() {
   const path = await window.api.openDirectoryDialog();
-  if (!path) return;
+  if (!path)
+    return;
   outputPath.value = path;
   currentCoPic.value.getSettings().outputPath = path;
-};
+}
 </script>
 
 <style lang="scss" scoped>
