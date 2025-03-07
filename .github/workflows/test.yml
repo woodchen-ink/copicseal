@@ -44,7 +44,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install --frozen-lockfile
+        run: npm install --frozen-lockfile --force
 
       - name: Build Electron app
         run: ${{ matrix.command }}
