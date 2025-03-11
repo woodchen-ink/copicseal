@@ -94,8 +94,8 @@ importers:
         specifier: ^9.26.0
         version: 9.30.0(eslint@8.57.1)
       piexifjs.d.ts.git:
-        specifier: github:kohaiy/piexifjs.d.ts
-        version: piexifjs.d.ts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#9d9faebcbdd8f4501f0ef7f45d4945c5f02a26b5
+        specifier: git+https://github.com/kohaiy/piexifjs.d.ts.git
+        version: piexifjs-dts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#f25c4f968c34d9ead664a76c12730172221153c4
       prettier:
         specifier: ^3.3.2
         version: 3.3.3
@@ -2953,9 +2953,9 @@ packages:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
 
-  piexifjs.d.ts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#9d9faebcbdd8f4501f0ef7f45d4945c5f02a26b5:
-    resolution: {commit: 9d9faebcbdd8f4501f0ef7f45d4945c5f02a26b5, repo: git@github.com:kohaiy/piexifjs.d.ts.git, type: git}
-    version: 0.0.0
+  piexifjs-dts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#f25c4f968c34d9ead664a76c12730172221153c4:
+    resolution: {commit: f25c4f968c34d9ead664a76c12730172221153c4, repo: git@github.com:kohaiy/piexifjs.d.ts.git, type: git}
+    version: 1.0.0
 
   piexifjs@1.0.6:
     resolution: {integrity: sha512-0wVyH0cKohzBQ5Gi2V1BuxYpxWfxF3cSqfFXfPIpl5tl9XLS5z4ogqhUCD20AbHi0h9aJkqXNJnkVev6gwh2ag==}
@@ -6909,7 +6909,7 @@ snapshots:
 
   picomatch@4.0.2: {}
 
-  piexifjs.d.ts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#9d9faebcbdd8f4501f0ef7f45d4945c5f02a26b5: {}
+  piexifjs-dts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#f25c4f968c34d9ead664a76c12730172221153c4: {}
 
   piexifjs@1.0.6: {}
 
