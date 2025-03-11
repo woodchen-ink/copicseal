@@ -30,8 +30,11 @@ jobs:
       matrix:
         include:
           - platform: windows-latest
-            command: npm run build:win
+            command: pnpm run build:win
             artifact: "dist/*.exe"
+          - platform: macos-latest
+            command: pnpm run build:mac
+            artifact: "dist/*.dmg"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -43,8 +46,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install dependencies
-        run: npm install --frozen-lockfile --force
+        run: pnpm install --frozen-lockfile
 
       - name: Build Electron app
         run: ${{ matrix.command }}
