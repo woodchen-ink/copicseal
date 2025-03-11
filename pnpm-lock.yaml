@@ -93,9 +93,9 @@ importers:
       eslint-plugin-vue:
         specifier: ^9.26.0
         version: 9.30.0(eslint@8.57.1)
-      piexifjs.d.ts.git:
-        specifier: git+https://github.com/kohaiy/piexifjs.d.ts.git
-        version: piexifjs-dts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#f25c4f968c34d9ead664a76c12730172221153c4
+      piexifjs-dts:
+        specifier: github:kohaiy/piexifjs.d.ts
+        version: https://codeload.github.com/kohaiy/piexifjs.d.ts/tar.gz/f25c4f968c34d9ead664a76c12730172221153c4
       prettier:
         specifier: ^3.3.2
         version: 3.3.3
@@ -2953,8 +2953,8 @@ packages:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
     engines: {node: '>=12'}
 
-  piexifjs-dts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#f25c4f968c34d9ead664a76c12730172221153c4:
-    resolution: {commit: f25c4f968c34d9ead664a76c12730172221153c4, repo: git@github.com:kohaiy/piexifjs.d.ts.git, type: git}
+  piexifjs-dts@https://codeload.github.com/kohaiy/piexifjs.d.ts/tar.gz/f25c4f968c34d9ead664a76c12730172221153c4:
+    resolution: {tarball: https://codeload.github.com/kohaiy/piexifjs.d.ts/tar.gz/f25c4f968c34d9ead664a76c12730172221153c4}
     version: 1.0.0
 
   piexifjs@1.0.6:
@@ -6909,7 +6909,7 @@ snapshots:
 
   picomatch@4.0.2: {}
 
-  piexifjs-dts@git+https://git@github.com:kohaiy/piexifjs.d.ts.git#f25c4f968c34d9ead664a76c12730172221153c4: {}
+  piexifjs-dts@https://codeload.github.com/kohaiy/piexifjs.d.ts/tar.gz/f25c4f968c34d9ead664a76c12730172221153c4: {}
 
   piexifjs@1.0.6: {}
 

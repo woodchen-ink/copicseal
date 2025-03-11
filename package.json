@@ -54,7 +54,7 @@
     "electron-vite": "^2.3.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.26.0",
-    "piexifjs.d.ts.git": "git+https://github.com/kohaiy/piexifjs.d.ts.git",
+    "piexifjs-dts": "github:kohaiy/piexifjs.d.ts",
     "prettier": "^3.3.2",
     "sass": "^1.80.5",
     "typescript": "^5.5.2",
