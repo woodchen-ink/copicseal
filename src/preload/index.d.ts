@@ -1,13 +1,9 @@
 import type { ElectronAPI } from '@electron-toolkit/preload';
-import type { CaptureOptions } from '../main/utils/capture';
+import type { WindowAPI } from '../types';
 
 declare global {
   interface Window {
     electron: ElectronAPI;
-    api: {
-      onWinResized: (callback: () => void) => () => void;
-      captureDOM: (options: CaptureOptions) => Promise<string[]>;
-      openDirectoryDialog: () => Promise<string>;
-    };
+    api: WindowAPI;
   }
 }

@@ -74,6 +74,11 @@ function getCoPicList() {
     currentIndex.value = list.value.length - 1;
   }
 
+  function remove(indexes: number[]) {
+    list.value = list.value.filter((_, index) => !indexes.includes(index));
+    currentIndex.value = Math.max(0, currentIndex.value - indexes.length);
+  }
+
   return {
     list,
     currentIndex,
@@ -82,6 +87,7 @@ function getCoPicList() {
     settings,
     setSettings,
     push,
+    remove,
   };
 }
 

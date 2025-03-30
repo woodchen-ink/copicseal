@@ -6,6 +6,7 @@
       class="co-image-list-item"
       :class="{ active: item.id === currentCoPic?.id }"
       @click="handleClickItem(i)"
+      @contextmenu="handleClickItemCtxMenu(i)"
     >
       <img :src="item.imgUrl" alt="">
     </div>
@@ -20,7 +21,7 @@ import { CoPic } from '@/utils/co-pic';
 import { ElScrollbar } from 'element-plus';
 import { ref } from 'vue';
 
-const { list, push, setCurrentIndex, currentCoPic } = injectCoPic();
+const { list, push, remove, setCurrentIndex, currentCoPic } = injectCoPic();
 const el = ref<InstanceType<typeof ElScrollbar>>();
 
 function handleFileChange(files: File[]) {
@@ -34,6 +35,56 @@ function handleFileChange(files: File[]) {
 
 function handleClickItem(index: number) {
   setCurrentIndex(index);
+}
+
+async function handleClickItemCtxMenu(index: number) {
+  const item = list.value[index];
+  if (!item)
+    return;
+
+  window.api.showCtxMenu([
+    {
+      label: '关闭',
+      click: () => {
+        remove([index]);
+      },
+    },
+    ...(list.value.length > 1
+      ? [{
+          label: '关闭其他',
+          click: () => {
+            const indexes = list.value.map((_, i) => i).filter(i => i !== index);
+            remove(indexes);
+          },
+        }]
+      : []),
+    ...(index > 0
+      ? [{
+          label: '关闭左侧',
+          click: () => {
+            const indexes = list.value.map((_, i) => i).filter(i => i < index);
+            remove(indexes);
+          },
+        }]
+      : []),
+    ...(index < list.value.length - 1
+      ? [{
+          label: '关闭右侧',
+          click: () => {
+            const indexes = list.value.map((_, i) => i).filter(i => i > index);
+            remove(indexes);
+          },
+        }]
+      : []),
+    ...(list.value.length > 1
+      ? [{
+          label: '全部关闭',
+          click: () => {
+            remove(list.value.map((_, i) => i));
+          },
+        }]
+      : []),
+  ]);
 }
 
 function handleScroll(e: WheelEvent) {

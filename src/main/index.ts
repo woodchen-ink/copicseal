@@ -1,6 +1,7 @@
+import type { MenuItem, MenuItemConstructorOptions } from 'electron';
 import { join } from 'node:path';
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu, shell } from 'electron';
 import pie from 'puppeteer-in-electron';
 import icon from '../../resources/icon.png?asset';
 import { handleCapture } from './utils/capture';
@@ -86,6 +87,21 @@ app.whenReady().then(() => {
       properties: ['openDirectory'],
     });
     return filePaths[0];
+  });
+
+  ipcMain.handle('showCtxMenu', (_event, menus: MenuItemConstructorOptions[]) => {
+    return new Promise<string>((resolve) => {
+      const template: (MenuItemConstructorOptions)[] = menus.map((menu) => {
+        return {
+          ...menu,
+          click: (menuItem) => {
+            resolve(menuItem.id);
+          },
+        };
+      });
+      const menu = Menu.buildFromTemplate(template);
+      menu.popup({ window: BrowserWindow.fromWebContents(_event.sender)! });
+    });
   });
 });
 

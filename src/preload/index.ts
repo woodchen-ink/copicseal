@@ -1,9 +1,10 @@
 import type { CaptureOptions } from '../main/utils/capture';
+import type { WindowAPI } from '../types';
 import { electronAPI } from '@electron-toolkit/preload';
 import { contextBridge, ipcRenderer } from 'electron/renderer';
 
 // Custom APIs for renderer
-const api = {
+const api: WindowAPI = {
   onWinResized: (callback: () => void) => {
     ipcRenderer.on('resized', callback);
     return () => void ipcRenderer.off('resized', callback);
@@ -12,6 +13,16 @@ const api = {
     return ipcRenderer.invoke('captureDOM', options);
   },
   openDirectoryDialog: () => ipcRenderer.invoke('openDirectoryDialog'),
+  showCtxMenu: async (menus) => {
+    menus.forEach(menu => { menu.id = menu.id || Math.random().toString(36).slice(2) })
+    const id = await ipcRenderer.invoke('showCtxMenu', menus.map((menu) => ({ ...menu, click: null })));
+    menus.forEach((menu) => {
+      if (menu.id === id) {
+        menu.click?.(menu);
+      }
+    });
+    return id;
+  },
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to
