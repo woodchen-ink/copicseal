@@ -53,14 +53,14 @@ watch(
   () => {
     if (currentCoPic.value) {
       isPicChange = true;
-      settings.value = cloneDeep(currentCoPic.value.getSettings().background);
+      settings.value = cloneDeep(currentCoPic.value.state.settings.background);
     }
   },
   { immediate: true },
 );
 
 watch(
-  () => currentCoPic.value?.getSettings().background.color,
+  () => currentCoPic.value?.state.settings.background.color,
   (val) => {
     if (val && settings.value)
       settings.value.color = val;
@@ -74,10 +74,10 @@ watch(
       isPicChange = false;
       return;
     }
-    // Object.assign(currentCoPic.value.getSettings().background, settings.value);
-    currentCoPic.value.setSettings({
-      background: settings.value,
-    });
+    Object.assign(currentCoPic.value.state.settings.background, settings.value);
+    // currentCoPic.value.setSettings({
+    //   background: settings.value,
+    // });
   },
   { deep: true },
 );

@@ -3,6 +3,7 @@ import type { Settings } from './types';
 import type { CoPic } from './utils/co-pic';
 import { cloneDeep } from 'lodash';
 import { computed, inject, provide, ref, shallowRef } from 'vue';
+import { storage } from './utils/storage';
 
 const CoPicInjectionKey: InjectionKey<ReturnType<typeof getCoPicList>>
   = Symbol('CoPicInjectionKey');
@@ -67,7 +68,8 @@ function getCoPicList() {
   }
 
   function push(pic: CoPic) {
-    pic.setSettings(cloneDeep(settings.value));
+    pic.setSettings(getDefaultSettings());
+    pic.state.settings = getDefaultSettings();
     list.value = list.value.concat(pic);
     currentIndex.value = list.value.length - 1;
   }
@@ -115,7 +117,7 @@ function getDefaultSettings(): Settings {
         type: 'jpeg',
       },
     ],
-    outputPath: '',
+    outputPath: storage.getItem('defaultOutputPath') || '',
   };
 }
 

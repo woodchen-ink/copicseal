@@ -6,7 +6,7 @@
           {{ getExifName(key) }}:
         </div>
         <div class="value">
-          <input v-model="currentCoPic.modifiedExif.value[key]" type="text">
+          <input v-model="currentCoPic.state.modifiedExif[key]" type="text">
         </div>
       </template>
     </div>

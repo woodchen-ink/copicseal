@@ -18,11 +18,23 @@ export class CoPic {
 
   private exif = ref<Tags>();
   modifiedExif = ref<Tags>({});
-  outputExif = computed(() => ({ ...this.exif.value, ...this.modifiedExif.value }));
+  outputExif = computed(() => ({ ...this.state.exif, ...this.modifiedExif.value }));
   isLoaded = ref(false);
 
-  state = reactive({
-    settings: {},
+  state = reactive<{
+    settings: Settings;
+    exif: Tags;
+    modifiedExif: Tags;
+    isLoaded: boolean;
+  }>({
+    settings: {
+      background: { mode: 'none' },
+      outputs: [],
+      outputPath: '',
+    },
+    exif: {},
+    modifiedExif: {},
+    isLoaded: false,
   });
 
   constructor(file: File) {
@@ -48,6 +60,7 @@ export class CoPic {
     };
     // this.settings.fields = fillId(this.settings.fields ?? []);
     this.isLoaded.value = false;
+    this.state.isLoaded = false;
     this.vNode = null;
     this.asyncLoad();
   }
@@ -67,13 +80,13 @@ export class CoPic {
       return;
     if (!this.usedExifKeys.value.includes(key)) {
       this.usedExifKeys.value.push(key);
-      this.modifiedExif.value[key] = this.exif.value?.[key] || '';
+      this.state.modifiedExif[key] = this.state.exif[key] || '';
     }
   }
 
   resetModifiedExif() {
     this.usedExifKeys.value.forEach((key) => {
-      this.modifiedExif.value[key] = this.exif.value?.[key] || '';
+      this.state.modifiedExif[key] = this.state.exif[key] || '';
     });
   }
 
@@ -94,6 +107,7 @@ export class CoPic {
     console.warn('isLoaded');
 
     this.isLoaded.value = true;
+    this.state.isLoaded = true;
   }
 
   private renderNode() {
@@ -111,6 +125,7 @@ export class CoPic {
   private async loadExif() {
     if (!this.exif.value) {
       this.exif.value = await getExif(this.file);
+      this.state.exif = this.exif.value;
       // this.imgInfo = toImgInfo(this.exif)
     }
     console.log(this.exif.value);

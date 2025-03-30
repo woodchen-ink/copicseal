@@ -41,7 +41,7 @@
       <span>{{ outputPath }}</span>
     </div>
     <div class="btns">
-      <CoButton outline>
+      <CoButton outline @click="handleApplyAll">
         应用全部
       </CoButton>
     </div>
@@ -54,9 +54,10 @@ import CoButton from '@/components/co-button/index.vue';
 import { Delete } from '@/components/co-icon/index';
 import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
 import { injectCoPic } from '@renderer/uses';
+import { storage } from '@renderer/utils/storage';
 import { ref, watch } from 'vue';
 
-const { currentCoPic } = injectCoPic();
+const { currentCoPic, list } = injectCoPic();
 
 const scaleOptions = ref([1, 2, 4, 6, 8]);
 const typeOptions = ref(['jpeg', 'png', 'webp']);
@@ -89,7 +90,15 @@ async function handleOutputFolder() {
   if (!path)
     return;
   outputPath.value = path;
+  storage.setItem('defaultOutputPath', path);
   currentCoPic.value.getSettings().outputPath = path;
+}
+
+function handleApplyAll() {
+  list.value.forEach((item) => {
+    item.getSettings().outputs = outputs.value;
+    item.getSettings().outputPath = outputPath.value;
+  });
 }
 </script>
 
@@ -148,3 +157,4 @@ async function handleOutputFolder() {
   margin-top: 16px;
 }
 </style>
+@renderer/utils/storage

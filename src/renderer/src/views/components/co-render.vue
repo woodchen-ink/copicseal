@@ -14,6 +14,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  watch,
 } from 'vue';
 import TplDefault from '../tpls/tpl-default.vue';
 
@@ -81,6 +82,12 @@ export default defineComponent({
         handleCalcSize();
       }, 200);
     });
+
+    watch(() => props.settings, () => {
+      setTimeout(() => {
+        handleCalcSize();
+      }, 0);
+    }, { deep: true });
 
     const offWinResize = window.api.onWinResized(() => {
       setTimeout(() => {
