@@ -5,7 +5,7 @@
     </div>
     <div v-if="settings.mode === 'color' && settings.color">
       <p>颜色选择: <input v-model="settings.color.rgba" type="color"></p>
-      <p>
+      <p v-show="false">
         调色盘:
         <span
           v-for="it in currentCoPic.colorPalette"
@@ -21,7 +21,7 @@
     </div>
     <div v-if="settings.mode === 'image' && settings.image">
       <p v-for="it in settings.image.filters" :key="it.type">
-        {{ it.type }}: <input v-model="it.value" type="text">
+        {{ filterMap[it.type] || it.type }}: <input v-model="it.value" type="text">
       </p>
       <!-- <p>背景模糊: <input v-model="settings.image.blur" type="text" /></p>
       <p>背景亮度: <input v-model="settings.image.brightness" type="text" /></p> -->
@@ -55,6 +55,9 @@ watch(
       isPicChange = true;
       settings.value = cloneDeep(currentCoPic.value.state.settings.background);
     }
+    else {
+      settings.value = undefined;
+    }
   },
   { immediate: true },
 );
@@ -87,6 +90,11 @@ const modeOptions = ref<Option[]>([
   { label: '纯色背景', icon: Palette, value: 'color' },
   { label: '图片背景', icon: Image, value: 'image' },
 ]);
+
+const filterMap = {
+  blur: '高斯模糊',
+  brightness: '亮度',
+};
 </script>
 
 <style lang="scss" scoped>

@@ -3,27 +3,38 @@
     <div v-if="list.length">
       {{ currentCoPic.name }}({{ currentIndex + 1 }}/{{ list.length }})
     </div>
-    <div v-if="list.length">
+    <div v-if="list.length" class="co-menu__btns">
       <CoButton outline @click="handleExport()">
         导出
       </CoButton>
       <CoButton outline @click="handleExportAll()">
         导出全部
       </CoButton>
+      <!-- <CoButton icon class="btn-settings" @click="settingsDialogVisible = true">
+        <Settings />
+      </CoButton> -->
     </div>
+    <ElDialog v-model="settingsDialogVisible" title="设置">
+      1
+    </ElDialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import CoButton from '@/components/co-button/index.vue';
+// import { Settings } from '@/components/co-icon';
 import { injectCoPic, injectProgress } from '@/uses';
-import { nextTick } from 'vue';
+import { ElDialog } from 'element-plus';
+import { nextTick, ref } from 'vue';
 
 const { currentCoPic, currentIndex, list } = injectCoPic();
 
 const progress = injectProgress();
 
+const settingsDialogVisible = ref(false);
+
 async function exportToImage() {
+  const filename = currentCoPic.value.name;
   const { outputs, background, outputPath } = currentCoPic.value.getSettings();
   if (!outputPath) {
     // eslint-disable-next-line no-alert
@@ -41,9 +52,9 @@ async function exportToImage() {
   const tplEl = renderEl.querySelector<HTMLDivElement>('[data-co-tpl]')!;
   const style = tplEl
     ? Array.from(document.querySelectorAll('style')).find(style =>
-        style.textContent?.includes(`[${tplEl.dataset.coTpl}]`),
-      )
-      || document.querySelector('link[rel=stylesheet]')
+      style.textContent?.includes(`[${tplEl.dataset.coTpl}]`),
+    )
+    || document.querySelector('link[rel=stylesheet]')
     : document.querySelector('style#co-style');
 
   const { width, height } = renderEl.getBoundingClientRect()!;
@@ -87,7 +98,7 @@ async function exportToImage() {
         return {
           ...output,
           rem: fs,
-          path: `${outputPath}/screenshot1@${output.scale}x.${output.type}`,
+          path: `${outputPath}/${filename}@${output.scale}x.${output.type}`,
         };
       }),
       // {
@@ -165,5 +176,14 @@ async function handleExportAll() {
   align-items: center;
   padding: 0 12px;
   background-color: #535353;
+
+  .co-menu__btns {
+    display: flex;
+    align-items: center;
+
+    .btn-settings {
+      font-size: 24px;
+    }
+  }
 }
 </style>

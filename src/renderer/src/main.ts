@@ -21,6 +21,9 @@ if (!window.api) {
     openDirectoryDialog: async () => {
       return '';
     },
+    showCtxMenu: async (_menus: any) => {
+      return '';
+    },
   };
 
   window.api = api;
