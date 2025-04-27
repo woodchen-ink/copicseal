@@ -32,3 +32,7 @@ $ pnpm build:mac
 # For Linux
 $ pnpm build:linux
 ```
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=comarkapp/comark&type=Date)](https://www.star-history.com/#comarkapp/comark&Date)
