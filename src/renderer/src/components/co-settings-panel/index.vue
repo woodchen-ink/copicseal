@@ -47,6 +47,7 @@ defineProps<{
     --el-collapse-content-text-color: #eee;
 
     .el-collapse-item__header {
+      --el-color-primary: #eee;
       display: flex;
       justify-content: space-between;
       padding: 0 12px;

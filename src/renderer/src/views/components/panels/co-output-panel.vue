@@ -157,4 +157,3 @@ function handleApplyAll() {
   margin-top: 16px;
 }
 </style>
-@renderer/utils/storage
