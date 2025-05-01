@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: comark-desktop
+appId: top.kohai.comark
+productName: Comark
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: comark-desktop
+  executableName: comark
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
