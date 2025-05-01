@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: comark-${{ matrix.label }}
-          path: dist/*
+          path: dist/*.${{ matrix.ext }}
 
   release:
     name: 发布到 GitHub Release
