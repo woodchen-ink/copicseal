@@ -50,11 +50,20 @@ jobs:
         run: pnpm run ${{ matrix.script }}
 
       # 整理构建产物，统一命名为 comark-平台.后缀
-      - name: 准备构建产物
+      - name: 准备构建产物 for macOS
+        if: matrix.platform == 'macos-latest'
         run: |
           mkdir release
           FILE=$(ls dist/*.${{ matrix.ext }} | head -n 1)
           cp "$FILE" "release/comark-${{ matrix.label }}.${{ matrix.ext }}"
+
+      - name: 准备构建产物 for Windows
+        if: matrix.platform == 'windows-latest'
+        run: |
+          mkdir release
+          $FILE = Get-ChildItem -Path dist\*.exe | Select-Object -First 1
+          Copy-Item -Path $FILE.FullName -Destination "release\comark-win.exe"
+        shell: pwsh
 
       # 上传构建产物供后续使用
       - name: 上传构建产物
