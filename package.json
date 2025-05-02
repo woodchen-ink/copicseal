@@ -7,6 +7,7 @@
     "email": "i@kohai.top",
     "url": "https://kohai.top"
   },
+  "license": "Apache-2.0",
   "homepage": "https://comark.kohai.top",
   "main": "./out/main/index.js",
   "scripts": {
