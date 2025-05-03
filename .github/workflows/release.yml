@@ -53,7 +53,7 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: comark-${{ matrix.label }}
+          name: copicseal-${{ matrix.label }}
           path: dist/*.${{ matrix.ext }}
 
   release:

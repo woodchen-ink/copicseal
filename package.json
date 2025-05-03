@@ -1,5 +1,5 @@
 {
-  "name": "comark",
+  "name": "copicseal",
   "version": "0.0.0-beta.3",
   "description": "A simple image processing tool for Windows and macOS.",
   "author": {
@@ -8,7 +8,7 @@
     "url": "https://kohai.top"
   },
   "license": "Apache-2.0",
-  "homepage": "https://comark.kohai.top",
+  "homepage": "https://copicseal.kohai.top",
   "main": "./out/main/index.js",
   "scripts": {
     "lint": "eslint . --fix",

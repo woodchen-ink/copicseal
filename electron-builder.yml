@@ -1,5 +1,5 @@
-appId: top.kohai.comark
-productName: Comark
+appId: top.kohai.copicseal
+productName: Copicseal
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: comark
+  executableName: copicseal
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

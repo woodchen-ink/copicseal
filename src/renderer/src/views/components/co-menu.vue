@@ -101,39 +101,6 @@ async function exportToImage() {
           path: `${outputPath}/${filename}@${output.scale}x.${output.type}`,
         };
       }),
-      // {
-      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot1.jpg',
-      //   scale: 8,
-      //   width: ~~width,
-      //   height: ~~height
-      // }
-      // {
-      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot11.jpg',
-      //   type: 'jpeg',
-      //   quality: 50,
-      //   width: ~~width,
-      //   height: ~~height
-      // },
-      // {
-      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot2.jpg',
-      //   type: 'jpeg',
-      //   quality: 10,
-      //   width: ~~width,
-      //   height: ~~height
-      // },
-      // {
-      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot3.jpg',
-      //   type: 'jpeg',
-      //   quality: 100,
-      //   width: ~~width,
-      //   height: ~~height
-      // },
-      // {
-      //   path: '/Users/kohai/projects/git/comark-desktop/out/screenshot.png',
-      //   type: 'png',
-      //   width: ~~width,
-      //   height: ~~height
-      // }
     ],
   });
   console.timeEnd('capture');
