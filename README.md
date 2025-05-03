@@ -9,6 +9,10 @@
 - 📦 **极简安装**：单文件安装，零依赖，启动迅速，占用资源极低。
 - 🔄 **持续优化中**：功能持续更新，欢迎反馈建议与贡献。
 
+## 🖥️ 软件截图
+
+![Comark 软件界面截图](./static/screenshot01.png)
+
 ## 📦 下载
 
 👉 [前往 GitHub Releases 下载最新版 Comark](https://github.com/comarkapp/comark/releases)
