@@ -1,12 +1,5 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
-  "include": [
-    "node_modules/piexifjs.d.ts.git/piexifjs.d.ts",
-    "src/renderer/src/env.d.ts",
-    "src/renderer/src/**/*",
-    "src/renderer/src/**/*.vue",
-    "src/preload/*.d.ts"
-  ],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
@@ -18,5 +11,12 @@
         "src/renderer/src/*"
       ]
     }
-  }
+  },
+  "include": [
+    "node_modules/piexifjs-dts/piexifjs.d.ts",
+    "src/renderer/src/env.d.ts",
+    "src/renderer/src/**/*",
+    "src/renderer/src/**/*.vue",
+    "src/preload/*.d.ts"
+  ]
 }

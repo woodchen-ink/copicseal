@@ -1,14 +1,32 @@
 <template>
   <ElScrollbar class="co-image-view">
-    <component :is="currentCoPic.update()" v-if="currentCoPic" />
+    <CoRender
+      v-if="currentCoPic && currentCoPic.state.isLoaded"
+      :img-url="currentCoPic.imgUrl"
+      :settings="currentCoPic.state.settings"
+      :exif="outputExif"
+    />
+    <!-- <component :is="currentCoPic.update()" v-if="currentCoPic" /> -->
   </ElScrollbar>
-</template>
+</template>``
 
 <script lang="ts" setup>
-import { ElScrollbar } from 'element-plus';
 import { injectCoPic } from '@/uses';
+import { ElScrollbar } from 'element-plus';
+import { computed } from 'vue';
+import CoRender from './co-render.vue';
 
 const { currentCoPic } = injectCoPic();
+
+const outputExif = computed(() => {
+  if (currentCoPic.value) {
+    return {
+      ...currentCoPic.value.state.exif,
+      ...currentCoPic.value.state.modifiedExif,
+    };
+  }
+  return {};
+});
 </script>
 
 <style lang="scss" scoped>

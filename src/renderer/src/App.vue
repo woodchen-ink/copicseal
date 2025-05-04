@@ -1,14 +1,14 @@
-<script setup lang="ts">
-import 'element-plus/theme-chalk/el-scrollbar.css';
-import { provideCoPic } from './uses';
-import CoMark from './views/co-mark.vue';
-
-provideCoPic();
-</script>
-
 <template>
   <CoMark />
 </template>
+
+<script setup lang="ts">
+import { provideCoPic } from './uses';
+import CoMark from './views/co-mark.vue';
+import 'element-plus/theme-chalk/el-scrollbar.css';
+
+provideCoPic();
+</script>
 
 <style lang="scss" scoped></style>
 
@@ -26,5 +26,23 @@ body {
 }
 * {
   box-sizing: border-box;
+}
+
+input,
+select {
+  line-height: 20px;
+  color: #eee;
+  background-color: #3e3e3e;
+  border: 1px solid #666;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #999;
+  }
+}
+
+select {
+  height: 24px;
 }
 </style>

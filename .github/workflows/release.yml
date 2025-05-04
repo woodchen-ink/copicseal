@@ -1,0 +1,81 @@
+name: Release CI
+
+on:
+  push:
+    tags:
+      - 'v*' # 例如 v1.0.0
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 打包构建 Electron 应用
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            script: build:mac
+            label: mac
+            ext: dmg
+
+          - platform: windows-latest
+            script: build:win
+            label: win
+            ext: exe
+
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: write
+    steps:
+      # 拉取代码
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
+
+      # 安装 Node.js
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 安装 pnpm
+      - name: 安装 pnpm
+        run: npm install -g pnpm
+
+      # 安装依赖
+      - name: 安装依赖
+        run: pnpm install
+
+      # 执行打包脚本（如 pnpm run build:win 或 build:mac）
+      - name: 执行构建脚本
+        run: pnpm run ${{ matrix.script }}
+
+      # 上传构建产物供后续使用
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: copicseal-${{ matrix.label }}
+          path: dist/*.${{ matrix.ext }}
+
+  release:
+    name: 发布到 GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 下载构建产物
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 查看文件结构
+        run: ls -R artifacts
+
+      - name: 上传到 GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/**/*.exe
+            artifacts/**/*.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

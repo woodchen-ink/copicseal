@@ -1,22 +1,20 @@
 <template>
   <ElScrollbar class="co-side">
-    <CoSettingsPanel title="输出" />
-    <CoSettingsPanel title="基本" />
+    <CoOutputPanel />
+    <!-- <CoSettingsPanel title="基本" /> -->
+    <CoPropsPanel />
     <CoBgPanel />
-    <CoSettingsPanel title="边框" />
-    <CoSettingsPanel title="debug">
-      {{ currentCoPic?.getSettings() }}
-    </CoSettingsPanel>
+    <!-- <CoSettingsPanel title="边框" /> -->
+    <CoInfoPanel />
   </ElScrollbar>
 </template>
 
 <script lang="ts" setup>
 import { ElScrollbar } from 'element-plus';
 import CoBgPanel from './panels/co-bg-panel.vue';
-import { injectCoPic } from '@/uses';
-import CoSettingsPanel from '@/components/co-settings-panel/index.vue';
-
-const { currentCoPic } = injectCoPic();
+import CoInfoPanel from './panels/co-info-panel.vue';
+import CoOutputPanel from './panels/co-output-panel.vue';
+import CoPropsPanel from './panels/co-props-panel.vue';
 </script>
 
 <style lang="scss" scoped>

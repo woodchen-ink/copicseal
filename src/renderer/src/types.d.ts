@@ -19,6 +19,14 @@ interface Field {
   children?: Field[];
 }
 
+export interface Output {
+  scale: number;
+  type?: 'jpeg' | 'png' | 'webp';
+  quality?: number;
+  width: number;
+  height: number;
+}
+
 export interface Settings {
   background: {
     mode: 'none' | 'color' | 'image';
@@ -32,7 +40,8 @@ export interface Settings {
     };
     style?: Style;
   };
-  fields: SettingsField[];
+  outputs: Output[];
+  outputPath?: string;
 }
 
 export interface SettingsField {

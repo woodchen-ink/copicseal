@@ -1,10 +1,12 @@
-import { type InjectionKey, Ref, computed, inject, provide, ref, shallowRef } from 'vue';
-import { cloneDeep } from 'lodash';
+import type { InjectionKey, Ref } from 'vue';
+import type { Settings } from './types';
 import type { CoPic } from './utils/co-pic';
-import { Settings } from './types';
+import { cloneDeep } from 'lodash';
+import { computed, inject, provide, ref, shallowRef } from 'vue';
+import { storage } from './utils/storage';
 
-const CoPicInjectionKey: InjectionKey<ReturnType<typeof getCoPicList>> =
-  Symbol('CoPicInjectionKey');
+const CoPicInjectionKey: InjectionKey<ReturnType<typeof getCoPicList>>
+  = Symbol('CoPicInjectionKey');
 
 export function provideCoPic() {
   const coPicList = getCoPicList();
@@ -15,6 +17,39 @@ export function provideCoPic() {
 }
 export function injectCoPic() {
   return inject(CoPicInjectionKey, getCoPicList());
+}
+
+const ProgressInjectionKey = Symbol('ProgressInjectionKey');
+export function provideProgress() {
+  const progress = ref({
+    current: 0,
+    total: 0,
+    filename: '',
+    visible: false,
+    onCancel: () => {
+      progress.value.visible = false;
+    },
+    onFinish: () => {
+      progress.value.visible = false;
+    },
+  });
+  provide(ProgressInjectionKey, progress);
+
+  return progress;
+}
+
+export function injectProgress() {
+  return inject(
+    ProgressInjectionKey,
+    ref({
+      current: 0,
+      total: 0,
+      filename: '',
+      visible: false,
+      onCancel: () => {},
+      onFinish: () => {},
+    }),
+  );
 }
 
 function getCoPicList() {
@@ -29,13 +64,19 @@ function getCoPicList() {
 
   function setSettings(_settings: Settings) {
     settings.value = _settings;
-    list.value.forEach((item) => item.setSettings(cloneDeep(_settings)));
+    list.value.forEach(item => item.setSettings(cloneDeep(_settings)));
   }
 
   function push(pic: CoPic) {
-    pic.setSettings(cloneDeep(settings.value));
+    pic.setSettings(getDefaultSettings());
+    pic.state.settings = getDefaultSettings();
     list.value = list.value.concat(pic);
     currentIndex.value = list.value.length - 1;
+  }
+
+  function remove(indexes: number[]) {
+    list.value = list.value.filter((_, index) => !indexes.includes(index));
+    currentIndex.value = Math.max(0, currentIndex.value - indexes.length);
   }
 
   return {
@@ -45,7 +86,8 @@ function getCoPicList() {
     setCurrentIndex,
     settings,
     setSettings,
-    push
+    push,
+    remove,
   };
 }
 
@@ -58,96 +100,49 @@ function getDefaultSettings(): Settings {
         filters: [
           {
             type: 'blur',
-            value: '0.04rem'
+            value: '0.04rem',
           },
           {
             type: 'brightness',
-            value: '120%'
-          }
-        ]
+            value: '100%',
+          },
+        ],
       },
       style: {
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
       },
-      padding: [0.1, 0.1]
+      padding: [0.1, 0.1],
     },
-    fields: [
+    outputs: [
       {
-        type: 'container',
-        style: {
-          padding: '0.01rem 0.01rem 0',
-          backgroundColor: '#fffc',
-          backdropFilter: 'blur(0.2rem)',
-          boxShadow: `0 0 0.2rem rgba(0, 0, 0, .8)`
-        },
-        children: [
-          {
-            type: 'main-image',
-            style: {
-              margin: '0 auto'
-              // width: '1rem'
-            }
-          },
-          {
-            type: 'container',
-            style: {
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              height: '0.1rem',
-              paddingLeft: '0.02rem',
-              paddingRight: '0.02rem',
-              fontSize: '0.05rem'
-            },
-            children: [
-              {
-                type: 'container',
-                style: {
-                  display: 'flex',
-                  alignItems: 'baseline'
-                },
-                children: [
-                  {
-                    type: 'text',
-                    expression: '${Make}',
-                    style: {
-                      display: 'flex',
-                      alignItems: 'flex-end'
-                    }
-                  },
-                  {
-                    type: 'text',
-                    expression: '${Model}',
-                    style: {
-                      display: 'flex',
-                      alignItems: 'flex-end',
-                      marginLeft: '0.02rem',
-                      fontSize: '0.04rem'
-                    }
-                  }
-                ]
-              },
-              {
-                type: 'container',
-                children: [
-                  {
-                    type: 'text',
-                    expression: '${FocalLength} ${FNumber} ${ExposureTime}s ISO${ISOSpeedRatings}',
-                    style: {
-                      display: 'flex',
-                      alignItems: 'flex-end',
-                      marginLeft: '0.03rem',
-                      fontSize: '0.03rem'
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+        scale: 1,
+        width: 1920,
+        height: 1080,
+        type: 'jpeg',
+      },
+    ],
+    outputPath: storage.getItem('defaultOutputPath') || '',
   };
+}
+
+export const primaryExif = [
+  { name: '相机厂商', key: 'Make' },
+  { name: '相机型号', key: 'Model' },
+  { name: '软件', key: 'Software' },
+  { name: '拍摄日期', key: 'DateTime' },
+  { name: '镜头型号', key: 'LensModel' },
+  { name: '焦距', key: 'FocalLength' },
+  { name: '光圈', key: 'FNumber' },
+  { name: '快门', key: 'ExposureTime' },
+  { name: '曝光补偿', key: 'ExposureBiasValue' },
+  { name: '曝光模式', key: 'ExposureMode' },
+  { name: '白平衡', key: 'WhiteBalance' },
+  { name: '测光模式', key: 'MeteringMode' },
+  { name: '感光度', key: 'ISOSpeedRatings' },
+];
+
+export function getExifName(key: string) {
+  return primaryExif.find(item => item.key === key)?.name || key;
 }

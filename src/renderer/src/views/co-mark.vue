@@ -5,13 +5,18 @@
       <CoMain />
       <CoSide />
     </div>
+    <CoProgress v-bind="progress" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import CoProgress from '@/components/co-progress/index.vue';
+import { provideProgress } from '@renderer/uses';
 import CoMain from './components/co-main.vue';
 import CoMenu from './components/co-menu.vue';
 import CoSide from './components/co-side.vue';
+
+const progress = provideProgress();
 </script>
 
 <style lang="scss" scoped>

@@ -1,34 +1,37 @@
 <script lang="tsx">
+import type { Tags } from '@/utils/exif';
+import type {
+  CSSProperties,
+  PropType,
+} from 'vue';
+import type { Settings } from '../../types';
+import { injectCoPic } from '@renderer/uses';
+import { mapStyle } from '@renderer/utils/common';
+import { renderUtils } from '@renderer/utils/render';
 import {
-  onMounted,
-  onBeforeUnmount,
-  ref,
   computed,
   defineComponent,
-  type CSSProperties,
-  PropType
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
 } from 'vue';
-import { Settings, SettingsField } from '../../types';
-import { mapStyle } from '@renderer/utils/common';
-import { Tags } from 'exifreader';
 import TplDefault from '../tpls/tpl-default.vue';
-
-console.log(TplDefault);
 
 export default defineComponent({
   props: {
     imgUrl: {
       type: String,
-      required: true
+      required: true,
     },
     settings: {
       type: Object as PropType<Settings>,
-      required: true
+      required: true,
     },
     exif: {
       type: Object as PropType<Tags>,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const isHorizontal = ref(true);
@@ -41,28 +44,31 @@ export default defineComponent({
         zIndex: 0,
         padding: mode === 'none' ? 0 : (padding ?? []).map((i: number) => `${i}rem`).join(' '),
         overflow: 'hidden',
-        ...mapStyle(style)
+        ...mapStyle(style),
       };
     });
 
     const bgImgStyle = computed<CSSProperties>(() => {
-      const { mode, style, padding, image, color } = props.settings.background;
+      const { mode, style, image, color } = props.settings.background;
 
       if (mode === 'none') {
         return {};
       }
 
+      const blur
+        = Number.parseFloat(String(image?.filters?.find(it => it.type === 'blur')?.value || 0)) * 2;
+
       return {
         zIndex: -1,
         position: 'absolute',
-        inset: '-' + padding?.[0] + 'rem',
+        inset: `-${blur}rem`,
         background: mode === 'image' ? `url(${props.imgUrl})` : color?.rgba,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         filter:
-          mode === 'image' ? image?.filters?.map((it) => `${it.type}(${it.value})`).join(' ') : '',
+          mode === 'image' ? image?.filters?.map(it => `${it.type}(${it.value})`).join(' ') : '',
         pointerEvents: 'none',
-        ...mapStyle(style)
+        ...mapStyle(style),
       };
     });
 
@@ -72,8 +78,16 @@ export default defineComponent({
     // const [ow, oh] = [1280, 720]
 
     onMounted(async () => {
-      handleCalcSize();
+      setTimeout(() => {
+        handleCalcSize();
+      }, 200);
     });
+
+    watch(() => props.settings, () => {
+      setTimeout(() => {
+        handleCalcSize();
+      }, 0);
+    }, { deep: true });
 
     const offWinResize = window.api.onWinResized(() => {
       setTimeout(() => {
@@ -84,44 +98,70 @@ export default defineComponent({
       offWinResize();
     });
 
-    function formatExpression(expression: string | undefined, data: Tags) {
-      if (!expression) return '';
-      return expression.replace(/\${(\w+)}/g, (_, key) => data[key]?.description || '');
-    }
+    // function formatExpression(expression: string | undefined, data: Tags) {
+    //   if (!expression) return '';
+    //   return expression.replace(/\${(\w+)}/g, (_, key) => data[key]?.description || '');
+    // }
+
+    const { currentCoPic } = injectCoPic();
 
     function render() {
-      const { fields } = props.settings;
+      // const { fields } = props.settings;
 
-      return fields.map((field) => renderNode(field, true));
+      // return fields.map((field) => renderNode(field, true));
+      const handler = {
+        get(target: Record<string, string>, key: string) {
+          currentCoPic.value.addExifKey(key);
+
+          return target[key];
+        },
+      };
+      const info = new Proxy(
+        Object.keys(props.exif).reduce((acc, key) => {
+          acc[key] = props.exif[key] || '';
+          return acc;
+        }, {} as Tags),
+        handler,
+      );
+
+      return (
+        <TplDefault
+          data-co-tpl={TplDefault.__scopeId}
+          utils={renderUtils}
+          info={info}
+          imgUrl={props.imgUrl}
+        />
+      );
     }
 
-    function renderNode(field: SettingsField, isRoot = false) {
-      if (field.type === 'container') {
-        return (
-          <div class={{ root: isRoot }} style={field.style}>
-            {field.children?.map((f) => renderNode(f))}
-          </div>
-        );
-      }
-      if (field.type === 'main-image') {
-        // return (
-        //   <div
-        //     class="main-image"
-        //     style={{ ...field.style, backgroundImage: `url(${props.imgUrl})`, backgroundSize: 'cover' }}
-        //   ></div>
-        // )
-        return (
-          <img class="main-image" style={{ ...field.style, display: 'block' }} src={props.imgUrl} />
-        );
-      }
-      if (field.type === 'text') {
-        return <div style={field.style}>{formatExpression(field.expression, props.exif)}</div>;
-      }
-      return field.type;
-    }
+    // function renderNode(field: SettingsField, isRoot = false) {
+    //   if (field.type === 'container') {
+    //     return (
+    //       <div class={{ root: isRoot }} style={field.style}>
+    //         {field.children?.map((f) => renderNode(f))}
+    //       </div>
+    //     );
+    //   }
+    //   if (field.type === 'main-image') {
+    //     // return (
+    //     //   <div
+    //     //     class="main-image"
+    //     //     style={{ ...field.style, backgroundImage: `url(${props.imgUrl})`, backgroundSize: 'cover' }}
+    //     //   ></div>
+    //     // )
+    //     return (
+    //       <img class="main-image" style={{ ...field.style, display: 'block' }} src={props.imgUrl} />
+    //     );
+    //   }
+    //   if (field.type === 'text') {
+    //     return <div style={field.style}>{formatExpression(field.expression, props.exif)}</div>;
+    //   }
+    //   return field.type;
+    // }
 
     function handleCalcSize() {
       const wrapperEl = el.value?.parentElement?.parentElement;
+      console.log(el.value, bgEl.value, wrapperEl);
       if (el.value && bgEl.value && wrapperEl) {
         const { width, height } = wrapperEl.getBoundingClientRect();
         calcSize(el.value, bgEl.value, [width, height]);
@@ -133,7 +173,7 @@ export default defineComponent({
     async function calcSize(
       _wrapper: HTMLDivElement,
       containerEl: HTMLDivElement,
-      [ow, oh]: number[]
+      [ow, oh]: number[],
     ) {
       containerEl.style.width = '';
       containerEl.style.height = '';
@@ -142,7 +182,9 @@ export default defineComponent({
       const initialWidth = 400;
       document.querySelector('html')!.style.fontSize = `${initialWidth}px`;
 
-      const mainImage = containerEl.querySelector<HTMLDivElement>('.main-image')!;
+      const mainImage = containerEl.querySelector<HTMLDivElement>('.main-image');
+      if (!mainImage)
+        return;
 
       const [iw, ih] = await getImgSize();
       console.log(iw, ih);
@@ -151,6 +193,8 @@ export default defineComponent({
       //     mainImage.style.width = `${iw / ih}em`
       //     mainImage.style.height = '1em'
       //   } else {
+      console.log(mainImage);
+
       mainImage.style.width = '1rem';
       mainImage.style.height = `${ih / iw}rem`;
       //   }
@@ -173,6 +217,10 @@ export default defineComponent({
       sizeRatio.value = isHorizontal.value ? oh / fontSize : ow / fontSize;
       console.log('sizeRatio', sizeRatio.value, isHorizontal.value);
 
+      if (props.settings.background.mode === 'none') {
+        ow = oh * imgRatio;
+      }
+
       containerEl.style.width = `${ow}px`;
       containerEl.style.height = `${oh}px`;
       containerEl.style.minWidth = `${ow}px`;
@@ -181,9 +229,9 @@ export default defineComponent({
     }
 
     function getImgSize() {
-      const { 'Image Width': ImageWidth, 'Image Height': ImageHeight, Orientation } = props.exif;
-      const [iw, ih, or] = [ImageWidth?.value, ImageHeight?.value, Orientation?.value];
-      if (iw && ih) return or && +or > 4 ? [ih, iw] : [iw, ih];
+      const { ImageWidth, ImageHeight } = props.exif;
+      if (ImageWidth && ImageHeight)
+        return [+ImageWidth, +ImageHeight];
 
       const img = new Image();
       img.src = props.imgUrl;
@@ -205,6 +253,6 @@ export default defineComponent({
         </div>
       </div>
     );
-  }
+  },
 });
 </script>
