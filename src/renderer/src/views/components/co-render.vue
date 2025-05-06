@@ -16,10 +16,17 @@ import {
   ref,
   watch,
 } from 'vue';
-import TplDefault from '../tpls/tpl-default.vue';
 
 export default defineComponent({
   props: {
+    tpl: {
+      type: Object as PropType<any>,
+      required: true,
+    },
+    tplProps: {
+      type: Object as PropType<any>,
+      required: true,
+    },
     imgUrl: {
       type: String,
       required: true,
@@ -83,7 +90,7 @@ export default defineComponent({
       }, 200);
     });
 
-    watch(() => props.settings, () => {
+    watch(() => [props.settings, props.tpl, props.tplProps], () => {
       setTimeout(() => {
         handleCalcSize();
       }, 0);
@@ -125,8 +132,9 @@ export default defineComponent({
       );
 
       return (
-        <TplDefault
-          data-co-tpl={TplDefault.__scopeId}
+        <props.tpl
+          {...props.tplProps}
+          data-co-tpl={props.tpl.__scopeId}
           utils={renderUtils}
           info={info}
           imgUrl={props.imgUrl}
@@ -189,15 +197,22 @@ export default defineComponent({
       const [iw, ih] = await getImgSize();
       console.log(iw, ih);
       //   const { width: iw, height: ih } = mainImage.getBoundingClientRect()
-      //   if (iw < ih) {
-      //     mainImage.style.width = `${iw / ih}em`
-      //     mainImage.style.height = '1em'
-      //   } else {
       console.log(mainImage);
 
-      mainImage.style.width = '1rem';
-      mainImage.style.height = `${ih / iw}rem`;
-      //   }
+      if (iw < ih) {
+        mainImage.style.width = `${iw / ih}rem`;
+        mainImage.style.height = '1rem';
+      }
+      else {
+        mainImage.style.width = '1rem';
+        mainImage.style.height = `${ih / iw}rem`;
+      }
+      const scale = 4;
+      const wr = iw / ih * scale;
+      const hr = wr * (ih / iw);
+      mainImage.style.width = `${wr}rem`;
+      mainImage.style.height = `${hr}rem`;
+
       console.log(containerEl);
 
       const { width: w1, height: h1 } = containerEl.getBoundingClientRect();

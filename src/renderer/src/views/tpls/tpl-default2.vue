@@ -1,13 +1,11 @@
 <template>
-  <div
-    class="tpl-card" :class="{ 'is-horizontal': isHorizontal }"
-    :style="{ '--border-padding': `${borderPadding}rem` }"
-  >
+  <div class="tpl-card" :class="{ 'is-horizontal': isHorizontal, 'is-text-white': textWhite }">
     <img
       class="main-image"
       :style="{
         display: 'block',
         margin: '0 auto',
+        borderRadius: `${radius}rem`,
       }"
       :src="imgUrl"
     >
@@ -37,9 +35,9 @@
 import { computed } from 'vue';
 
 defineOptions({
-  id: 'tpl-default',
-  name: 'TplDefault',
-  title: '默认模板(白色边框)',
+  id: 'tpl-default2',
+  name: 'TplDefault2',
+  title: '默认模板(无框圆角)',
 });
 
 const props = defineProps({
@@ -52,11 +50,11 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  borderPadding: {
+  radius: {
     type: Number,
-    default: 0.04,
+    default: 0.1,
     __co: {
-      label: '相框边距',
+      label: '图片圆角',
     },
   },
   direction: {
@@ -80,6 +78,13 @@ const props = defineProps({
       ],
     },
   },
+  textWhite: {
+    type: Boolean,
+    default: false,
+    __co: {
+      label: '文字白色',
+    },
+  },
 });
 
 const isHorizontal = computed(() => {
@@ -89,21 +94,27 @@ const isHorizontal = computed(() => {
 
 <style lang="scss" scoped>
 .tpl-card {
-  --border-padding: 0.01rem;
-  padding: var(--border-padding) var(--border-padding) 0;
   color: #000;
-  background-color: #fff;
-  box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.8);
+
+  &.is-text-white {
+    color: #fff;
+
+    .make-model .make-logo {
+
+      > img {
+        filter: drop-shadow(0 0 0.02rem white) drop-shadow(0 0 0.02rem white);
+      }
+    }
+  }
 }
 
 .card-info {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  height: 0.4rem;
-  padding-left: 0.1rem;
-  padding-right: 0.1rem;
-  font-size: 0.1rem;
+  gap: 0.2em;
+  padding-top: 0.2rem;
+  font-size: 0.2rem;
 
   .make-model {
     display: flex;
@@ -141,12 +152,11 @@ const isHorizontal = computed(() => {
 
 .is-horizontal.tpl-card {
   display: flex;
-  padding: var(--border-padding) 0 var(--border-padding) var(--border-padding);
 
   .card-info {
     flex-direction: column;
     height: unset;
-    padding: 0.1rem;
+    padding: 0.02rem;
 
     .make-model {
       flex: 1;
@@ -156,7 +166,7 @@ const isHorizontal = computed(() => {
     }
     .details-info .basie-info {
       flex-direction: column;
-      gap: 0.5em;
+      gap: 1em;
       margin-left: 0;
       font-size: 0.1rem;
     }
@@ -164,8 +174,9 @@ const isHorizontal = computed(() => {
 }
 
 .main-image {
-  /* width: 100%; */
   width: 1rem;
   height: auto;
+  border-radius: 0.05rem;
+  box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.8);
 }
 </style>
