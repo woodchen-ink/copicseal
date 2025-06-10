@@ -16,6 +16,24 @@
   <img src="./static/screenshot01.jpg" alt="Copicseal 软件界面截图">
 </picture>
 
+## 📦 下载
+
+👉 [前往 GitHub Releases 下载最新版 Copicseal](https://github.com/copicseal/copicseal/releases)
+
+### ⬇️ 代理下载
+- [Windows 下载](https://copicseal-updater.kohai.top/download?platform=win32)
+- [MacOS 下载](https://copicseal-updater.kohai.top/download?platform=darwin)
+
+## 💬 常见问题
+
+### Q: macOS 安装后提示「应用已损坏」怎么办？
+
+由于 mac 应用未经过 Apple 公证，初次打开时可能会提示“应用已损坏”或无法验证开发者。可以通过以下命令跳过 Gatekeeper 校验：
+
+```bash
+sudo xattr -rd com.apple.quarantine /Applications/Copicseal.app
+```
+
 ## 🖼️ 模板示例
 
 ### 1. 白色边框模板
@@ -36,41 +54,9 @@
   <img src="./static/templates/template03_00.jpg" alt="PS 启动窗模板">
 </picture>
 
-### 3.2 PS 启动窗模板（磨砂）
-<picture>
-  <source srcset="./static/templates/template03_01.webp" type="image/webp">
-  <img src="./static/templates/template03_01.jpg" alt="PS 启动窗模板（磨砂）">
-</picture>
 
-### 4. 时间戳模板
-<picture>
-  <source srcset="./static/templates/template04.webp" type="image/webp">
-  <img src="./static/templates/template04.jpg" alt="时间戳模板">
-</picture>
+> 更多请前往 [Copicseal 官网](https://copicseal.kohai.top) 查看
 
-### 5. 文字内嵌模板
-<picture>
-  <source srcset="./static/templates/template05.webp" type="image/webp">
-  <img src="./static/templates/template05.jpg" alt="文字内嵌模板">
-</picture>
-
-## 📦 下载
-
-👉 [前往 GitHub Releases 下载最新版 Copicseal](https://github.com/copicseal/copicseal/releases)
-
-### ⬇️ 代理下载
-- [Windows 下载](https://copicseal-updater.kohai.top/download?platform=win32)
-- [MacOS 下载](https://copicseal-updater.kohai.top/download?platform=darwin)
-
-## 💬 常见问题
-
-### Q: macOS 安装后提示「应用已损坏」怎么办？
-
-由于 mac 应用未经过 Apple 公证，初次打开时可能会提示“应用已损坏”或无法验证开发者。可以通过以下命令跳过 Gatekeeper 校验：
-
-```bash
-sudo xattr -rd com.apple.quarantine /Applications/Copicseal.app
-```
 
 ## ⭐ Star History
 
