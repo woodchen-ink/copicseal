@@ -183,7 +183,6 @@ const datetimeStyle = computed(() => {
 
   &.is-logo-shadow {
     .detail-info .make-logo {
-
       > img {
         filter: drop-shadow(0 0 0.02rem var(--text-color)) drop-shadow(0 0 0.02rem var(--text-color));
       }

@@ -11,14 +11,14 @@ export default defineConfig({
   main: {
     plugins: [
       externalizeDepsPlugin({
-        include: ['http-proxy-agent'],
+        include: ['http-proxy-agent', 'ajv'],
       }),
     ],
   },
   preload: {
     plugins: [
       externalizeDepsPlugin({
-        include: ['http-proxy-agent'],
+        include: ['http-proxy-agent', 'ajv'],
       }),
     ],
   },
@@ -35,7 +35,9 @@ export default defineConfig({
       UnoCSS(),
       AutoImport({
         imports: ['vue'],
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver({
+          importStyle: 'sass',
+        })],
       }),
       Components({
         resolvers: [ElementPlusResolver({

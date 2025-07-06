@@ -3,7 +3,7 @@ import type { Settings } from '../types';
 import type { CoPic } from '../utils/co-pic';
 import { cloneDeep } from 'lodash';
 import { computed, inject, provide, ref, shallowRef } from 'vue';
-import { storage } from '../utils/storage';
+import { useConfig } from './config';
 
 const CoPicInjectionKey: InjectionKey<ReturnType<typeof getCoPicList>>
   = Symbol('CoPicInjectionKey');
@@ -59,6 +59,8 @@ function getCoPicList() {
 }
 
 function getDefaultSettings(): Settings {
+  const { config } = useConfig();
+
   return {
     background: {
       mode: 'image',
@@ -91,7 +93,7 @@ function getDefaultSettings(): Settings {
         isOriginal: true,
       },
     ],
-    outputPath: storage.getItem('defaultOutputPath') || '',
+    outputPath: config.value.output.defaultPath ?? '',
   };
 }
 
