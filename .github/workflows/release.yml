@@ -2,8 +2,9 @@ name: Release CI
 
 on:
   push:
-    tags:
-      - 'v*' # 例如 v1.0.0
+    branches:
+      - main
+      - master
   workflow_dispatch:
 
 jobs:
@@ -31,11 +32,22 @@ jobs:
       - name: 检出仓库代码
         uses: actions/checkout@v4
 
+      # 生成时间戳版本号
+      - name: 生成时间戳版本号
+        id: version
+        shell: bash
+        run: |
+          TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
+          VERSION="0.0.0-dev.${TIMESTAMP}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+          echo "生成版本号: ${VERSION}"
+
       # 安装 Node.js
       - name: 安装 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       # 安装 pnpm
       - name: 安装 pnpm
@@ -44,6 +56,13 @@ jobs:
       # 安装依赖
       - name: 安装依赖
         run: pnpm install
+
+      # 更新 package.json 版本号
+      - name: 更新版本号
+        shell: bash
+        run: |
+          node -e "const fs=require('fs');const pkg=JSON.parse(fs.readFileSync('package.json'));pkg.version='${{ steps.version.outputs.version }}';fs.writeFileSync('package.json',JSON.stringify(pkg,null,2));"
+          echo "已更新 package.json 版本为: ${{ steps.version.outputs.version }}"
 
       # 执行打包脚本（如 pnpm run build:win 或 build:mac）
       - name: 执行构建脚本
@@ -69,6 +88,15 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: 生成时间戳版本号
+        id: version
+        run: |
+          TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
+          VERSION="0.0.0-dev.${TIMESTAMP}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+          echo "生成版本号: ${VERSION}"
+
       - name: 下载构建产物
         uses: actions/download-artifact@v4
         with:
@@ -80,6 +108,16 @@ jobs:
       - name: 上传到 GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          body: |
+            自动构建版本
+
+            构建时间: ${{ steps.version.outputs.timestamp }}
+            提交: ${{ github.sha }}
+            分支: ${{ github.ref_name }}
+          draft: false
+          prerelease: true
           files: |
             artifacts/**/*.exe
             artifacts/**/*.dmg

@@ -64,7 +64,7 @@ function handleMenuClick(command: string) {
       updateDialogVisible.value = true;
       break;
     case 'feedback':
-      window.open('https://github.com/copicseal/copicseal/issues/new', '_blank');
+      window.open('https://www.sunai.net/t/topic/1088', '_blank');
       break;
     case 'about':
       aboutDialogVisible.value = true;
