@@ -70,5 +70,7 @@ interface Output {
 
 export interface CaptureOptions {
   html: string;
+  dpi?: number;
+  exif?: Record<string, any>;
   output: Output[] | Output;
 }

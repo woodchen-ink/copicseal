@@ -92,7 +92,7 @@ jobs:
         id: version
         run: |
           TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
-          VERSION="0.0.0-dev.${TIMESTAMP}"
+          VERSION="0.0.1-dev.${TIMESTAMP}"
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
           echo "生成版本号: ${VERSION}"
@@ -117,7 +117,7 @@ jobs:
             提交: ${{ github.sha }}
             分支: ${{ github.ref_name }}
           draft: false
-          prerelease: true
+          prerelease: false
           files: |
             artifacts/**/*.exe
             artifacts/**/*.dmg

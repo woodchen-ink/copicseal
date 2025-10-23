@@ -19,13 +19,14 @@ interface Output {
 export interface CaptureOptions {
   html: string;
   dpi?: number;
+  exif?: Record<string, any>;
   output: Output[] | Output;
 }
 
 let mainWindow: BrowserWindow | null = null;
 let page: Page | null = null;
 let timer: ReturnType<typeof setTimeout> | null = null;
-export async function handleCapture({ html, output, dpi }: CaptureOptions, retry = 1) {
+export async function handleCapture({ html, output, dpi, exif }: CaptureOptions, retry = 1) {
   if (!Array.isArray(output)) {
     output = [output];
   }
@@ -75,21 +76,43 @@ export async function handleCapture({ html, output, dpi }: CaptureOptions, retry
       type: currentOutput.type,
       quality: currentOutput.type !== 'png' ? Math.max(0, Math.min(100, Math.round((currentOutput.quality ?? 1) * 100))) : undefined,
     });
-    if (dpi) {
-      if (currentOutput.type === 'png') {
-        const PixelsPerUnitX = Math.round(dpi * (11811 / 300));
-        await exiftool.write(outputPath, {
-          PixelsPerUnitX,
-          PixelsPerUnitY: PixelsPerUnitX,
-          PixelUnits: 'meters',
-        } as any, { writeArgs: ['-overwrite_original'] });
+
+    // 写入 EXIF 信息
+    if (dpi || exif) {
+      const exifData: Record<string, any> = {};
+
+      // 保留原图的 EXIF 信息
+      if (exif) {
+        // 复制所有原图的 EXIF 数据
+        Object.assign(exifData, exif);
+
+        // 移除不应该写入的字段
+        delete exifData.ImageWidth;
+        delete exifData.ImageHeight;
+        delete exifData.ExifImageWidth;
+        delete exifData.ExifImageHeight;
+        delete exifData.PixelXDimension;
+        delete exifData.PixelYDimension;
       }
-      else {
-        await exiftool.write(outputPath, {
-          XResolution: dpi,
-          YResolution: dpi,
-          ResolutionUnit: 'inches',
-        }, { writeArgs: ['-overwrite_original'] });
+
+      // 写入 DPI 信息
+      if (dpi) {
+        if (currentOutput.type === 'png') {
+          const PixelsPerUnitX = Math.round(dpi * (11811 / 300));
+          exifData.PixelsPerUnitX = PixelsPerUnitX;
+          exifData.PixelsPerUnitY = PixelsPerUnitX;
+          exifData.PixelUnits = 'meters';
+        }
+        else {
+          exifData.XResolution = dpi;
+          exifData.YResolution = dpi;
+          exifData.ResolutionUnit = 'inches';
+        }
+      }
+
+      // 一次性写入所有 EXIF 数据
+      if (Object.keys(exifData).length > 0) {
+        await exiftool.write(outputPath, exifData as any, { writeArgs: ['-overwrite_original'] });
       }
     }
     page.setViewport(vp);
@@ -103,7 +126,7 @@ export async function handleCapture({ html, output, dpi }: CaptureOptions, retry
     }, 10 * 1000);
     console.timeEnd('capture-div');
 
-    return [outputPath, ...(await handleCapture({ html, output: output.slice(1), dpi }))].filter(
+    return [outputPath, ...(await handleCapture({ html, output: output.slice(1), dpi, exif }))].filter(
       Boolean,
     );
   }
@@ -115,7 +138,7 @@ export async function handleCapture({ html, output, dpi }: CaptureOptions, retry
     page?.close().catch(() => {});
     page = null;
     if (retry > 0) {
-      return handleCapture({ html, output }, retry - 1);
+      return handleCapture({ html, output, dpi, exif }, retry - 1);
     }
   }
   return [];
