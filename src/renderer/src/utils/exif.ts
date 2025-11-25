@@ -75,6 +75,22 @@ const exifKeyFormatter: Record<keyof RawTags, (exif: RawTags) => Tags> = {
       FocalLength: exif.FocalLength?.description.replace(' ', ''),
     };
   },
+  'FNumber': (exif) => {
+    // FNumber 可能是数字或分数形式 [numerator, denominator]
+    const val = exif.FNumber?.value;
+    if (typeof val === 'number') {
+      return { FNumber: val };
+    }
+    else if (Array.isArray(val) && val.length === 2) {
+      return { FNumber: val[0] / val[1] };
+    }
+    // 如果有 description，提取数值部分（如 "f/5.6" -> 5.6）
+    else if (exif.FNumber?.description) {
+      const match = exif.FNumber.description.match(/[\d.]+/);
+      return { FNumber: match ? Number.parseFloat(match[0]) : exif.FNumber.description };
+    }
+    return {};
+  },
   'DateTimeOriginal': (exif) => {
     return {
       DateTimeOriginal: dayjs(exif.DateTimeOriginal?.description, 'YYYY:MM:DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
